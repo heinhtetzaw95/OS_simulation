@@ -17,9 +17,4 @@
 #include "simulation_header.h"
 using namespace std;
 
-int main() {
-
-	cout << "hey, everything works so far" << endl;
-
-	return 0;
-}
+// write auxiliary functions for our driver
