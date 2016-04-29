@@ -2,7 +2,7 @@
 *	File Name				:	treeNqueue_functions.cpp
 *	Primary Author			:	Hein Htet Zaw
 *	Contributing Author(s)	:
-*	Date Created			:	29 April 2016
+*	Date Created			:	28 April 2016
 *	Date Last Modified		:	29 April 2016
 *
 *	Description		:	This file defines all the functions needed for the storage tree and queues
@@ -17,8 +17,8 @@ using namespace std;
 
 bool tree::add(job *theJob) {
 
-		// Receives – The job to insert
-		// Task - Insert the job into the tree
+		// Receives â€“ The job to insert
+		// Task - Insert the job into the tree **sorted by Job Number**
 		// Returns - Whether or not success
 
 			//reserve vrequired variables
@@ -46,6 +46,61 @@ bool tree::add(job *theJob) {
 
 					//branch to left if the new node is less than current node
 			else if (theJob->num < currentPointer->num) {
+						
+						//extend branch from the free side
+				if (currentPointer->left != NULL) currentPointer = currentPointer->left;
+				else {
+					currentPointer->left = theJob;
+					inserted = true;
+				}
+			}
+
+					//branch to right side if the new node is higher than current one
+			else {
+
+						//extend the branch from the free side
+				if (currentPointer->right != NULL) currentPointer = currentPointer->right;
+				else {
+					currentPointer->right = theJob;
+					inserted = true;
+				}
+			}
+		}
+		jobCount++;
+
+	return true;
+}
+
+//*****************************************************************************************************
+bool tree::add_jobLength(job *theJob) {
+
+		// Receives â€“ The job to insert
+		// Task - Insert the job into the tree **sorted by Job Length**
+		// Returns - Whether or not success
+
+			//reserve vrequired variables
+	bool inserted = false;
+	job *currentPointer;
+
+				//set left and right pointers to NULL for new node
+		theJob->left = NULL;
+		theJob->right = NULL;
+
+				//the first ever node is root
+		currentPointer = root;
+
+				//loop if not inserted yet
+		while (inserted == false) {
+
+					//put the node in root if the root is empty
+			if (currentPointer == NULL) {
+				root = theJob;
+				inserted = true;
+			}
+			
+					//go to left if same length -- jobs can have the same length
+					//branch to left if the new node is less than current node
+			else if (theJob->length <= currentPointer->length) {
 						
 						//extend branch from the free side
 				if (currentPointer->left != NULL) currentPointer = currentPointer->left;
@@ -101,7 +156,7 @@ job * tree::getJob(int jobNum) {
 //*****************************************************************************************************
 bool longQueue::add(job *theJob){
 
-		// Receives – The pointer of the job to add
+		// Receives â€“ The pointer of the job to add
 		// Task - Adds the pointer of the job provided to *this* queue
 		// Returns - Whether fail or success adding
 
@@ -126,7 +181,7 @@ bool longQueue::add(job *theJob){
 //*****************************************************************************************************
 job * longQueue::getNext(){
 
-		 // Receives – Nothing
+		 // Receives â€“ Nothing
 		 // Task - Take out the first job from the queue, and move the next job to front
 		 // Returns - The pointer of the job that leaves the queue
 		
@@ -148,7 +203,7 @@ job * longQueue::getNext(){
  //*****************************************************************************************************
 bool shortQueue::add(job *theJob){
 
-		// Receives – The pointer of the job to add
+		// Receives â€“ The pointer of the job to add
 		// Task - Adds the pointer of the job provided to *this* queue
 		// Returns - Whether fail or success adding
 
@@ -173,7 +228,7 @@ bool shortQueue::add(job *theJob){
 //*****************************************************************************************************
 job * shortQueue::getNext(){
 
-		 // Receives – Nothing
+		 // Receives â€“ Nothing
 		 // Task - Take out the first job from the queue, and move the next job to front
 		 // Returns - The pointer of the job that leaves the queue
 		
@@ -195,7 +250,7 @@ job * shortQueue::getNext(){
  //*****************************************************************************************************
 bool ioQueue::add(job *theJob){
 
-		// Receives – The pointer of the job to add
+		// Receives â€“ The pointer of the job to add
 		// Task - Adds the pointer of the job provided to *this* queue
 		// Returns - Whether fail or success adding
 
@@ -220,7 +275,7 @@ bool ioQueue::add(job *theJob){
 //*****************************************************************************************************
 job * ioQueue::getNext(){
 
-		 // Receives – Nothing
+		 // Receives â€“ Nothing
 		 // Task - Take out the first job from the queue, and move the next job to front
 		 // Returns - The pointer of the job that leaves the queue
 		
