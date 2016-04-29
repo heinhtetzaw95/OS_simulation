@@ -19,17 +19,18 @@
 #define long_max 60
 #define short_max 30
 #define io_max 30
+#define cpu_burst_max 25
 
 		//set up a structure for jobs
 struct job {
 
 				//include the following information in the job
-	int num;					//job number
-	int length;					//(CPU bursts + I/O bursts) time
-	int arrival;				//arriaval time
-	int io_burst;				//the length of time this job requires an I/O device
-	int cpu_burst[25];			//the time this process requires the CPU
-	int burst_count = 0;		//number of cpu bursts given in the data file
+	int num;						//job number
+	int length;						//(CPU bursts + I/O bursts) time
+	int arrival;					//arriaval time
+	int io_burst;					//the length of time this job requires an I/O device
+	int cpu_burst[cpu_burst_max];	//the time this process requires the CPU
+	int burst_count = 0;			//number of cpu bursts given in the data file
 
 				//create variables for the followings
 
@@ -124,18 +125,14 @@ public:
 
 static job *processor = NULL;				//the (only) processor
 static job *IO = NULL;						//the I/O device
-static job *long_term[long_max];			//long-term queue
-static job *short_term[short_max];			//short-term queue
-static job *IO_q[io_max];					//I/O queue
 
 			//declare variables for the followings
 static int myClock = 0;						//clock to keep track of time
-static int total_job_count = 0;				//place to keep track of how many jobs inputed
-static int total_LTQ = 0;					//total long term queue wait time for all jobs
-static int total_STQ = 0;					//total short term queue wait time for all jobs
-static int total_ioQ = 0;					//total I/O Queue wait time for all jobs
+static int LTQ_time = 0;					//total long term queue wait time for all jobs
+static int STQ_time = 0;					//total short term queue wait time for all jobs
+static int IOQ_time = 0;					//total I/O Queue wait time for all jobs
 
-static job temp;							//temporary space
+static job *temp = NULL;					//temporary space
 
 						//*** more variables are to be added as needed ***//
 

@@ -60,7 +60,7 @@ int main() {
 
 		//******* these are the tests to check if data is read correctly *******//
 		print(theJob);	//print current job
-		if (storage.add(theJob)) cout << "Input Success" << endl << endl;	//print message
+		if (storage.add(theJob)) cout << "Input Success!" << endl << endl;	//print message
 		else cout << "Input Failed!" << endl << endl;
 		//**********************************************************************//
 
