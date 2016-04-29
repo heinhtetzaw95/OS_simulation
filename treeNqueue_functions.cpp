@@ -99,3 +99,144 @@ job * tree::getJob(int jobNum) {
 }
 
 //*****************************************************************************************************
+bool longQueue::add(job *theJob){
+
+		// Receives – The pointer of the job to add
+		// Task - Adds the pointer of the job provided to *this* queue
+		// Returns - Whether fail or success adding
+
+		//return false when the queue is full
+	if (isFull()) return false;
+
+		//start filling from the front if the queue is empty
+	if (!isEmpty()) front = 0;
+
+		//increase one space to rear and add the job
+	rear++;
+	theQ[rear] = theJob;
+
+		//loop the places when the line is filled in rear but line is not full
+	if (rear == long_max && size != long_max) rear = 0;
+
+		//keep track of number of jobs in the queue
+	size++;
+	return true;
+};
+
+//*****************************************************************************************************
+job * longQueue::getNext(){
+
+		 // Receives – Nothing
+		 // Task - Take out the first job from the queue, and move the next job to front
+		 // Returns - The pointer of the job that leaves the queue
+		
+		//return NULL if the queue is empty
+	if (isEmpty()) return false;
+
+	job *temp;
+	if (front < 0) front = 0;
+
+		//move the next job to the front of the queue
+	temp = theQ[front];
+	front++;
+		
+		//keep track of the number of jobs in the queue
+	if (size > 0) size--;
+	return temp;
+};
+
+ //*****************************************************************************************************
+bool shortQueue::add(job *theJob){
+
+		// Receives – The pointer of the job to add
+		// Task - Adds the pointer of the job provided to *this* queue
+		// Returns - Whether fail or success adding
+
+		//return false when the queue is full
+	if (isFull()) return false;
+
+		//start filling from the front if the queue is empty
+	if (!isEmpty()) front = 0;
+
+		//increase one space to rear and add the job
+	rear++;
+	theQ[rear] = theJob;
+
+		//loop the places when the line is filled in rear but line is not full
+	if (rear == short_max && size != short_max) rear = 0;
+
+		//keep track of number of jobs in the queue
+	size++;
+	return true;
+};
+
+//*****************************************************************************************************
+job * shortQueue::getNext(){
+
+		 // Receives – Nothing
+		 // Task - Take out the first job from the queue, and move the next job to front
+		 // Returns - The pointer of the job that leaves the queue
+		
+		//return NULL if the queue is empty
+	if (isEmpty()) return false;
+
+	job *temp;
+	if (front < 0) front = 0;
+
+		//move the next job to the front of the queue
+	temp = theQ[front];
+	front++;
+		
+		//keep track of the number of jobs in the queue
+	if (size > 0) size--;
+	return temp;
+};
+
+ //*****************************************************************************************************
+bool ioQueue::add(job *theJob){
+
+		// Receives – The pointer of the job to add
+		// Task - Adds the pointer of the job provided to *this* queue
+		// Returns - Whether fail or success adding
+
+		//return false when the queue is full
+	if (isFull()) return false;
+
+		//start filling from the front if the queue is empty
+	if (!isEmpty()) front = 0;
+
+		//increase one space to rear and add the job
+	rear++;
+	theQ[rear] = theJob;
+
+		//loop the places when the line is filled in rear but line is not full
+	if (rear == io_max && size != io_max) rear = 0;
+
+		//keep track of number of jobs in the queue
+	size++;
+	return true;
+};
+
+//*****************************************************************************************************
+job * ioQueue::getNext(){
+
+		 // Receives – Nothing
+		 // Task - Take out the first job from the queue, and move the next job to front
+		 // Returns - The pointer of the job that leaves the queue
+		
+		//return NULL if the queue is empty
+	if (isEmpty()) return false;
+
+	job *temp;
+	if (front < 0) front = 0;
+
+		//move the next job to the front of the queue
+	temp = theQ[front];
+	front++;
+		
+		//keep track of the number of jobs in the queue
+	if (size > 0) size--;
+	return temp;
+};
+
+ //*****************************************************************************************************

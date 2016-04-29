@@ -243,3 +243,6 @@ ModelManifest.xml
 
 # FAKE - F# Make
 .fake/
+*.vcxproj
+OS_simulation.vcxproj.filters
+SIM_DATA.txt

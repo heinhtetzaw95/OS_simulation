@@ -1,3 +1,15 @@
+/*
+*	File Name				:	main.cpp
+*	Primary Author			:	Hein Htet Zaw
+*	Contributing Author(s)	:
+*	Date Created			:	29 April 2016
+*	Date Last Modified		:	29 April 2016
+*
+*	Description		:	This file contains the main function of the program and some small functions
+*                       required by the main function.
+*
+*/
+
 #include <iostream>
 #include <fstream>
 #include <iomanip>
@@ -6,8 +18,8 @@
 
 using namespace std;
 
-void print(job*);
-bool traverseTree(tree*, job*);
+void print(job *);
+bool traverseTree(tree *, job *);
 
 int main() {
 	ifstream infile("SIM_DATA.txt", ios::in);
@@ -67,6 +79,11 @@ int main() {
 }
 
 void print(job* theJob) {
+	
+		// Receives – The pointer of a job
+		// Task - Print the job information about the given job
+		// Returns - Nothing
+
 	cout << setw(5) << theJob->num << " "
 		<< setw(5) << theJob->length << " "
 		<< setw(5) << theJob->arrival << " "
@@ -83,7 +100,8 @@ void print(job* theJob) {
 	cout << "CPU Burst Count: " << theJob->burst_count << endl;
 }
 
-bool traverseTree(tree* storage, job* current) {
+//*****************************************************************************************************
+bool traverseTree(tree *storage, job *current) {
 
 		// Receives – The storage tree and where to start
 		// Task - Considering the recieved node is root and print every node below it
@@ -98,3 +116,5 @@ bool traverseTree(tree* storage, job* current) {
 
 	return true;
 }
+
+//*****************************************************************************************************
