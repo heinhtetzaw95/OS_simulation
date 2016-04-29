@@ -54,7 +54,8 @@ private:
 
 public:
 	tree() { root = NULL; jobCount = 0;};		//create constructor function
-	bool add(job *theJob);						//add the items in the tree, sorted by **JOB NUMBER**
+	bool add(job * );						//add the items in the tree, sorted by **JOB NUMBER**
+	bool add_jobLength(job * );					//add the job in the tree, sorted by **JOB LENGTH**
 
 	job * getJob(int JobNum);					//get the pointer of a certain job by its job number
 	job * getRoot() { return root; };			//get the root of "this" tree
@@ -74,7 +75,7 @@ public:
 	bool isEmpty() { if (size == 0) return true; else return false; };			//returns empty or not
 	bool isFull() { if (size == long_max) return true; else return false; };	//returns full or not
 	
-	bool add(job *);					//adds the given job
+	bool add(job * );					//adds the given job
 	job * getNext();					//get the pointer of the next job in the queue
 
 	int getRear() { return rear; };		//returns the array number of lsatmost node
@@ -93,7 +94,7 @@ public:
 	bool isEmpty() { if (size == 0) return true; else return false; };			//returns empty or not
 	bool isFull() { if (size == short_max) return true; else return false; };	//returns full or not
 
-	bool add(job *);					//adds the given job
+	bool add(job * );					//adds the given job
 	job * getNext();					//get the pointer of the next job in the queue
 
 	int getRear() { return rear; };		//returns the array number of lsatmost node
