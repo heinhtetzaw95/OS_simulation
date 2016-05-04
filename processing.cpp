@@ -24,9 +24,9 @@ using namespace std;
     // prototypes
 void manage_ltq(longQueue&, bool&, job*);
 void manage_stq(shortQueue&, longQueue&, IOdevice*, bool&);
-void manage_ioq(ioQueue&, bool&, job*, int&, bool&);
+void manage_ioq(ioQueue&, CPU*);
 void manage_cpu(CPU*, job*, shortQueue&, bool&);
-void manage_iodevice(int&, int&, int&, bool&, job&, ioQueue&, bool&, bool&);
+void manage_iodevice(IOdevice*, ioQueue&, job*, bool&, bool&);
 
 /* manage_ltq
  * Author: Katelyn Schaffer
@@ -39,7 +39,7 @@ void manage_ltq(longQueue& longterm_queue, bool& incoming_job, job* new_job) {
         // Handle any current jobs in longterm queue
     if (!longterm_queue.isEmpty()) {
             // Increment wait time for all processes in queue
-        longterm_queue.incremement_wait();                                          // !! This function should be written
+        longterm_queue.incrementAll();
     }
         // Handle incoming job if the longtern queue is not full
     if (incoming_job && !longterm_queue.isFull()) {
@@ -66,7 +66,7 @@ void manage_stq(shortQueue& shortterm_queue, longQueue& longterm_queue, IOdevice
         // Handle any current jobs in shortterm queue
     if (!shortterm_queue.isEmpty()) {
         // Increment wait time for all processes in queue
-        shortterm_queue.incremement_wait();                                         // !! This function should be written
+        shortterm_queue.incrementAll();
     }
     
         // Handle any job that has just finished with the I/O device
@@ -133,7 +133,7 @@ void manage_cpu(CPU* cpu, job* entering_process, shortQueue& shortterm_queue, bo
         }
             // Otherwise, check if process is in CPU when
             //  interrupt occured
-        else if (cpu->susp_process == entering_process->num) {
+        else if (cpu->susp_process->num == entering_process->num) {
                 // Update CPU wait counter
             cpu->wait++;
                 // Flag that processing has stopped
@@ -159,7 +159,7 @@ void manage_cpu(CPU* cpu, job* entering_process, shortQueue& shortterm_queue, bo
             // Handle if no interrupt
         else {
                 // Handle any process that's in the CPU and check for completion
-            if (entering_process->num == cpu->process) {                                         // Process ID ?
+            if (entering_process->num == cpu->process->num) {
                     // Update timer of current CPU burst
                 cpu->timer++;
                     // Check completion
@@ -175,7 +175,7 @@ void manage_cpu(CPU* cpu, job* entering_process, shortQueue& shortterm_queue, bo
                     // Unsuspend any process that's suspended
                 if (entering_process->num == cpu->suspended) {
                         // Give entering process the CPU
-                    cpu->process = entering_process->num;
+                    cpu->process = entering_process;
                         // Increment cpu wait counter
                     cpu->wait++;
                         // Process is no longer suspended
@@ -186,7 +186,7 @@ void manage_cpu(CPU* cpu, job* entering_process, shortQueue& shortterm_queue, bo
                         // Get process from the shortterm queue
                     entering_process = shortterm_queue.getNext();
                         // Give process to the CPU
-                    cpu->process = entering_process->num;
+                    cpu->process = entering_process;
                         // Update queue
                                                                             // !! not necessary if getNext() already deletes job from queue
 
@@ -212,23 +212,23 @@ void manage_cpu(CPU* cpu, job* entering_process, shortQueue& shortterm_queue, bo
  *
  * Description: Manages the IO queue
  */
-void manage_ioq(ioQueue& io_queue, bool& cpu_complete, job* cpu_process, int& cpu_process_num, bool& cpu_ready) {
+void manage_ioq(ioQueue& io_queue, CPU* cpu) {
         // Handle processes in IO queue
     if (!io_queue.isEmpty()) {
             // Increment wait times
-        io_queue.increment_wait();                                            // !! Need function to increment all wait times
+        io_queue.incrementAll();
     }
     
         // Handle any process that the CPU just finished processing
-    if (cpu_complete && !io_queue.isFull()) {
+    if (cpu->complete && !io_queue.isFull()) {
             // Move process from CPU to IO queue
-        io_queue.add(cpu_process);
+        io_queue.add(cpu->process);
             // Reset CPU process num
-        cpu_process_num = 0;
+        cpu->process->num = 0;
             // Indicate CPU is ready for more processes
-        cpu_ready = true;
+        cpu->ready = true;
             // Reset cpu_complete flag
-        cpu_complete = false;
+        cpu->complete = false;
     }
     
     return;
@@ -241,20 +241,19 @@ void manage_ioq(ioQueue& io_queue, bool& cpu_complete, job* cpu_process, int& cp
  *
  * Description: Manages the IO device
  */
-void manage_iodevice(int& in_device, int& io_timer, int& io_burst_length, bool& io_complete, bool& io_available,
-                     job* entering_io, ioQueue& io_queue, bool& interrupt, bool& job_finished) {
+void manage_iodevice(IOdevice* io_device, ioQueue& io_queue, job* entering_io, bool& interrupt, bool& job_finished) {
         // Handle if no current interrupt
     if (interrupt) {
             // Handle if process is in IO device
-        if (entering_io->num == in_device) {
+        if (entering_io->num == io_device->process->num) {
                 // Update IO timer
-            io_timer++;
+            io_device->timer++;
                 // If finished burst
-            if (io_timer == io_burst_length) {
+            if (io_device->timer == io_device->burst_length) {
                     // Indicate IO complete
-                io_complete = true;
+                io_device->complete = true;
                     // Reset IO device
-                in_device = 0;
+                io_device->process = nullptr;
                     // Interrupt if more CPU bursts to process
                 if (NEXT_CPU_BURST_LENGTH != 0) {                               // !!!! need way to check this
                         // Indicate interrupt
@@ -271,17 +270,17 @@ void manage_iodevice(int& in_device, int& io_timer, int& io_burst_length, bool& 
             //  any processes in IO queue
         else {
                 // Check for processes in IO queue and device availability
-            if (!io_queue.isEmpty() && io_available) {
+            if (!io_queue.isEmpty() && io_device->available) {
                     // Get process from queue
                 entering_io = io_queue.getNext();                               // !! get number or job?
                     // Give IO device to process
-                in_device = entering_io->num;
+                io_device->process = entering_io;
                     // (Delete job from IO queue)
                 
                     // Reset IO timer
-                io_timer = 0;
+                io_device->timer = 0;
                     // Indicate IO device is busy
-                io_available = false;
+                io_device->available = false;
             }
         } // End handling IO queue
     }

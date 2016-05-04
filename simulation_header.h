@@ -151,7 +151,6 @@ int total_ioq_wait = 0;
 struct IOdevice {
     bool    available;
     bool    complete;
-    int     device;
     int     timer;
     int     burst_length;
     job*    process;
@@ -159,14 +158,15 @@ struct IOdevice {
 
 struct CPU {
     int     wait;
-    int     process;
+    int     process_id;
     int     timer;
     bool    complete;
     bool    ready;
     bool    processing_stopped;
     bool    suspended;
     int     suspend_timer;
-    int     susp_process;
+    job*    susp_process;
+    job*    process;
 };
 
 
