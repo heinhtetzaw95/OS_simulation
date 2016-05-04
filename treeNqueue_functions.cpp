@@ -3,7 +3,7 @@
 *	Primary Author			:	Hein Htet Zaw
 *	Contributing Author(s)	:
 *	Date Created			:	28 April 2016
-*	Date Last Modified		:	29 April 2016
+*	Date Last Modified		:	3 May 2016
 *
 *	Description		:	This file defines all the functions needed for the storage tree and queues
 *                       required to make this project work.
@@ -200,6 +200,27 @@ job * longQueue::getNext(){
 	return temp;
 };
 
+//*****************************************************************************************************
+bool longQueue::incrementAll() {
+	
+		// Receives – Nothing
+		// Task - Increment the time in long queue of all the processes
+		// Returns - Incremented everything or queue is empty
+
+		//return false if the queue is empty
+	if (isEmpty()) return false;
+			
+		//if queue is not empty, increment all the processes in the queue
+	else
+		for (int i = getFront(); i <= getRear(); i++) {
+			theQ[i]->time_in_longQ++;
+		
+			if (i == long_max) i = -1;
+		}
+
+	return true;
+}
+
  //*****************************************************************************************************
 bool shortQueue::add(job *theJob){
 
@@ -248,6 +269,27 @@ job * shortQueue::getNext(){
 };
 
  //*****************************************************************************************************
+bool shortQueue::incrementAll() {
+
+	// Receives – Nothing
+	// Task - Increment the time in short queue of all the processes
+	// Returns - Incremented everything or queue is empty
+
+		//return false if the queue is empty
+	if (isEmpty()) return false;
+
+		//if queue is not empty, increment all the processes in the queue
+	else
+		for (int i = getFront(); i <= getRear(); i++) {
+			theQ[i]->time_in_shortQ++;
+
+			if (i == short_max) i = -1;
+		}
+
+	return true;
+}
+
+//*****************************************************************************************************
 bool ioQueue::add(job *theJob){
 
 		// Receives – The pointer of the job to add
@@ -295,3 +337,24 @@ job * ioQueue::getNext(){
 };
 
  //*****************************************************************************************************
+bool ioQueue::incrementAll() {
+
+	// Receives – Nothing
+	// Task - Increment the time in I/O queue of all the processes
+	// Returns - Incremented everything or queue is empty
+
+		//return false if the queue is empty
+	if (isEmpty()) return false;
+
+		//if queue is not empty, increment all the processes in the queue
+	else
+		for (int i = getFront(); i <= getRear(); i++) {
+			theQ[i]->time_in_ioQ++;
+
+			if (i == io_max) i = -1;
+		}
+
+	return true;
+}
+
+//*****************************************************************************************************

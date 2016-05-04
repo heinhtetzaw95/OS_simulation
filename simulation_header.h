@@ -3,7 +3,7 @@
 *	Primary Author			:	Hein Htet Zaw
 *	Contributing Author(s)	:	
 *	Date Created			:	26 April 2016
-*	Date Last Modified		:	29 April 2016
+*	Date Last Modified		:	3 May 2016
 *	
 *	Description		:	This is the header file where all the global variables and data structures
 *						are declared and defined.
@@ -81,6 +81,7 @@ public:
 	int getRear() { return rear; };		//returns the array number of lsatmost node
 	int getFront() { return front; };	//returns the array number of frontmost node
 	int getSize() { return size; };		//returns the current number of jobs in the queue
+	bool incrementAll();					//increment all the jobs inside the queue
 };
 
 		//declare and define short queue and its required functions
@@ -100,6 +101,7 @@ public:
 	int getRear() { return rear; };		//returns the array number of lsatmost node
 	int getFront() { return front; };	//returns the array number of frontmost node
 	int getSize() { return size; };		//returns the current number of jobs in the queue
+	bool incrementAll();				//increment all the jobs inside the queue
 };
 
 		//declare and define the required functions for I/O queue
@@ -119,6 +121,7 @@ public:
 	int getRear() { return rear; };		//returns the array number of lsatmost node
 	int getFront() { return front; };	//returns the array number of frontmost node
 	int getSize() { return size; };		//returns the current number of jobs in the queue
+	bool incrementAll();				//increment all the jobs inside the queue
 };
 
 			//declare and instantiate global variables and arrays
