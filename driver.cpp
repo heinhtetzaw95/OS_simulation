@@ -52,6 +52,7 @@ int main() {
         int     device;
         int     timer;
         int     burst_length;
+        job*    process;
     };
     
     struct CPU {

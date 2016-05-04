@@ -23,7 +23,7 @@ using namespace std;
 
     // prototypes
 void manage_ltq(longQueue&, bool&, job*);
-void manage_stq(shortQueue&, longQueue&, bool&, bool&, int&, bool&);
+void manage_stq(shortQueue&, longQueue&, IOdevice*, bool&);
 void manage_ioq(ioQueue&, bool&, job*, int&, bool&);
 void manage_cpu(int&, int&, int&, bool&, int&, job*, bool&, bool&, int&, bool&, int&, shortQueue&);
 void manage_iodevice(int&, int&, int&, bool&, job&, ioQueue&, bool&, bool&);
@@ -62,7 +62,7 @@ void manage_ltq(longQueue& longterm_queue, bool& incoming_job, job* new_job) {
  *
  * Description: Manages the shortterm queue
  */
-void manage_stq(shortQueue& shortterm_queue, longQueue& longterm_queue, bool& io_complete, bool& io_available, int& in_io, bool& job_finished) {
+void manage_stq(shortQueue& shortterm_queue, longQueue& longterm_queue, IOdevice* io_device, bool& job_finished) {
         // Handle any current jobs in shortterm queue
     if (!shortterm_queue.isEmpty()) {
         // Increment wait time for all processes in queue
@@ -70,11 +70,11 @@ void manage_stq(shortQueue& shortterm_queue, longQueue& longterm_queue, bool& io
     }
     
         // Handle any job that has just finished with the I/O device
-    if (io_complete) {
+    if (io_device->complete) {
             // Remove IO completion indicator
-        io_complete = false;
+        io_device->complete = false;
             // Flag io device as available
-        io_available = true;
+        io_device->available = true;
             // Handle if the job is finished
         if (job_finished) {
                 // (Decrement "more_jobs" / Remove job from the system)                 // ?? How do?
@@ -84,6 +84,8 @@ void manage_stq(shortQueue& shortterm_queue, longQueue& longterm_queue, bool& io
             
                 // (Collect the data)                                                   // ?? How do?
             
+            //io_device->process
+            
         }
             // If not finished, place back on shorttterm queue
         else {
@@ -92,7 +94,7 @@ void manage_stq(shortQueue& shortterm_queue, longQueue& longterm_queue, bool& io
                     // Place the process in the shortterm queue                        // ?? What process?
             
                     // Reset IO device
-                in_io = 0;
+                io_device->process = nullptr;
             }
             else {
                 // Error

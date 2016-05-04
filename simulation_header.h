@@ -140,4 +140,27 @@ static job *temp = NULL;					//temporary space
 
 						//*** more variables are to be added as needed ***//
 
+
+struct IOdevice {
+    bool    available;
+    bool    complete;
+    int     device;
+    int     timer;
+    int     burst_length;
+    job*    process;
+};
+
+struct CPU {
+    int     wait;
+    int     process;
+    int     timer;
+    bool    complete;
+    bool    ready;
+    bool    processing_stopped;
+    bool    suspended;
+    int     suspend_timer;
+    int     susp_process;
+};
+
+
 #endif // !_SIMULATION_HEADER_H_
