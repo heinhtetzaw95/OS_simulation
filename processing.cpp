@@ -82,10 +82,13 @@ void manage_stq(shortQueue& shortterm_queue, longQueue& longterm_queue, IOdevice
                 // Remove jon finished flag
             job_finished = false;
             
-                // (Collect the data)                                                   // ?? How do?
-            
-            //io_device->process
-            
+                // Collect data
+            total_response_time += io_device->process->response;
+            total_productive_time += io_device->process->length;
+            total_turnaround_time += io_device->process->turnaround;
+            total_stq_wait += io_device->process->time_in_shortQ;
+            total_ltq_wait += io_device->process->time_in_longQ;
+            total_ioq_wait += io_device->process->time_in_ioQ;
         }
             // If not finished, place back on shorttterm queue
         else {

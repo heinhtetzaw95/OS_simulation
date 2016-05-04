@@ -138,6 +138,13 @@ static int IOQ_time = 0;					//total I/O Queue wait time for all jobs
 
 static job *temp = NULL;					//temporary space
 
+int total_response_time = 0;
+int total_productive_time = 0;
+int total_turnaround_time = 0;
+int total_stq_wait = 0;
+int total_ltq_wait = 0;
+int total_ioq_wait = 0;
+
 						//*** more variables are to be added as needed ***//
 
 

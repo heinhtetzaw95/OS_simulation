@@ -33,7 +33,7 @@ void print_footer(ofstream&);
  * Author: Francesco Polizzi
  * Other contributors:
  * Last revised: May 3, 2015
- * Description: Calculating the % of jobs in the LTQ
+ * Description: Calculating the the LTQ avg wait time
  */
 double avg_ltq(int total_jobs, int total_in_ltq) {
         // calculate average
@@ -47,7 +47,7 @@ double avg_ltq(int total_jobs, int total_in_ltq) {
  * Author: Francesco Polizzi
  * Other contributors:
  * Last revised: May 3, 2015
- * Description: Calculating the % of jobs in the STQ
+ * Description: Calculating the the STQ avg wait time
  */
 double 	avg_stq(int total_jobs, int total_in_stq){
         // calculate average
@@ -61,7 +61,7 @@ double 	avg_stq(int total_jobs, int total_in_stq){
  * Author: Francesco Polizzi
  * Other contributors:
  * Last revised: May 3, 2015
- * Description: Calculating the % of jobs in the IOQ
+ * Description: Calculating the the IOQ avg wait time
  */
 double	avg_ioq(int total_jobs, int total_in_ioq){
         // calculate average
