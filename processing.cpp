@@ -25,7 +25,7 @@ using namespace std;
 void manage_ltq(longQueue&, bool&, job*);
 void manage_stq(shortQueue&, longQueue&, IOdevice*, bool&);
 void manage_ioq(ioQueue&, bool&, job*, int&, bool&);
-void manage_cpu(int&, int&, int&, bool&, int&, job*, bool&, bool&, int&, bool&, int&, shortQueue&);
+void manage_cpu(CPU*, job*, shortQueue&, bool&);
 void manage_iodevice(int&, int&, int&, bool&, job&, ioQueue&, bool&, bool&);
 
 /* manage_ltq
@@ -118,87 +118,86 @@ void manage_stq(shortQueue& shortterm_queue, longQueue& longterm_queue, IOdevice
  *
  * Description: Manages the CPU
  */
-void manage_cpu(int& cpu_wait, int& cpu_process, int& cpu_timer, bool& cpu_complete, int& cpu_ready,
-                job* entering_process, bool& processing_stopped, bool& suspended, int& suspend_timer, bool& interrupt, int& susp_process, shortQueue& shortterm_queue) {
+void manage_cpu(CPU* cpu, job* entering_process, shortQueue& shortterm_queue, bool& interrupt) {
         // Handle if a process is suspended
-    if (suspended) {
+    if (cpu->suspended) {
             // Decrement suspend timer
-        suspend_timer--;
+        cpu->suspend_timer--;
             // Check if interrupt is complete
-        if (suspend_timer == 0) {
+        if (cpu->suspend_timer == 0) {
             interrupt = false;
-            suspended = false;
+            cpu->suspended = false;
         }
             // Otherwise, check if process is in CPU when
             //  interrupt occured
-        else if (susp_process == entering_process->num) {
+        else if (cpu->susp_process == entering_process->num) {
                 // Update CPU wait counter
-            cpu_wait++;
+            cpu->wait++;
                 // Flag that processing has stopped
-            processing_stopped = true;
+            cpu->processing_stopped = true;
         }
     } // End suspend handling
     
         // If processing has not been halted
-    if (!processing_stopped) {
+    if (!cpu->processing_stopped) {
         
             // Handle interrupt if suspend timer is up
-        if (interrupt && suspend_timer == 0) {
+        if (interrupt && cpu->suspend_timer == 0) {
                 // Suspend any process that has the CPU currently
-            if (cpu_process > 0) {
-                susp_process = cpu_process; // Suspend current process
-                cpu_process = 0;            // Now CPU is free of processes
+            if (cpu->process > 0) {
+                cpu->susp_process = cpu->process; // Suspend current process
+                cpu->process = 0;            // Now CPU is free of processes
             }
                 // Reset suspend timer
-            suspend_timer = SUSPEND_TIME;
+            cpu->suspend_timer = SUSPEND_TIME;
                 // Flag suspension
-            suspended = true;
+            cpu->suspended = true;
         }
             // Handle if no interrupt
         else {
                 // Handle any process that's in the CPU and check for completion
-            if (entering_process->num == cpu_process) {                                         // Process ID ?
+            if (entering_process->num == cpu->process) {                                         // Process ID ?
                     // Update timer of current CPU burst
-                cpu_timer++;
+                cpu->timer++;
                     // Check completion
                 if (entering_process->time_in_cpu == entering_process->cpu_burst_length) {      // !! cpu_burst_length ?
                         // Flag completion
-                    cpu_complete = true;
+                    cpu->complete = true;
                         // Reset burst timer
-                    cpu_timer = 0;
+                    cpu->timer = 0;
                 }
             }
                 // Handle any process with completed suspension or get next process
             else {
                     // Unsuspend any process that's suspended
-                if (entering_process->num == suspended) {
+                if (entering_process->num == cpu->suspended) {
                         // Give entering process the CPU
-                    cpu_process = entering_process->num;
+                    cpu->process = entering_process->num;
                         // Increment cpu wait counter
-                    cpu_wait++;
+                    cpu->wait++;
                         // Process is no longer suspended
-                    suspended = 0;
+                    cpu->suspended = 0;
                 }
                     // Get next job for the CPU if applicable
-                else if (!shortterm_queue.isEmpty() && cpu_ready) {
+                else if (!shortterm_queue.isEmpty() && cpu->ready) {
                         // Get process from the shortterm queue
                     entering_process = shortterm_queue.getNext();
                         // Give process to the CPU
-                    cpu_process = entering_process->num;
+                    cpu->process = entering_process->num;
                         // Update queue
                                                                             // !! not necessary if getNext() already deletes job from queue
 
                         // Indicate CPU is not ready for more processes
-                    cpu_ready = false;
+                    cpu->ready = false;
                         // Initialize cpu process timer
-                    cpu_timer = 0;
+                    cpu->timer = 0;
                 }
             } // End handling process with completed suspension or next process
         }   // End handling no interrupt
     } // End handling if processing has not halted
     
         // Flag CPU as unstopped
-    processing_stopped = false;
+    cpu->processing_stopped = false;
     
     return;
 }
