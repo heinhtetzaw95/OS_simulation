@@ -28,7 +28,7 @@ int main() {
     bool stop_flag         = false; // Signals to stop CPU job processing
     bool suspend_flag      = false; // Signals context switch to handle interrupt
 
-    int cpu = 0;  // integer to indicate which job has the CPU.
+    //int cpu = 0;  // integer to indicate which job has the CPU.
     int count = 0; // keeps track of the number of processes ran
     int devise = 0; // integer to signal which process is in the I/O device
     int process = -1;  // integer to indicate the process entering the CPU
@@ -40,10 +40,38 @@ int main() {
     bool ltq_full = false; // Signals that the Long Term Queue is full
     bool stq_empty = true; // Signals that the Short Term Queue is empty
     bool stq_full = false; // Signals that the Short term Queue is full
+    
+    
+    ////////////////
+    // NEW VARIABLES
+    ////////////////
+    
+    struct IOdevice {
+        bool    available;
+        bool    complete;
+        int     device;
+        int     timer;
+        int     burst_length;
+    };
+    
+    struct CPU {
+        int     wait;
+        int     process;
+        int     timer;
+        bool    complete;
+        bool    ready;
+        bool    processing_stopped;
+        bool    suspended;
+        int     suspend_timer;
+        int     susp_process;
+    };
+    
+    IOdevice io_device;
+    CPU cpu;
 
          // initialize our job and jobs list
-    Job tempJob;
-    Job job_list[];
+    job tempJob;
+    job job_list[];
 
          // initialize our
     ifstream infile("data.txt", ios::in);
@@ -60,7 +88,7 @@ int main() {
          //read and process data from our file
     while (reading) {
         //create a new job
-        tempJob = new Job();
+        tempJob = new job();
         //read in job information
         infile >> tempJob.num;
         infile >> tempJob.length;
@@ -114,45 +142,19 @@ int main() {
 
     /// 4.1 //////////////////////////////////////////////////////////////////
         //while there are jobs to process
-    //while(jobsToProcess) {
-         //put the job in the long term queue
-    if (!long_queue.isFull()) {
-             //add the job in the queue
-        long_queue.push(** current job goes here **);
+    while(JOBS_TO_PROCESS) {
+        //manage_ltq()
+        //manage_stq()
+        //manage_cpu()
+        //manage_ioq()
+        //manage_iodevice()
+        
+        //remove finished jobs?
+        //increment clock
+        //check for incoming processes
     }
-    else {
-        long_temp_queue.push();
-    }
-
-         //put the job from long term queue to short term queue
-    if (!short_queue.isFull()) {
-        short_queue.push(long_queue.pop());
-    }
-    else {
-        short_temp_queue.push(long_queue.pop());
-    }
-
-            //determine what job goes in the processor next
-    //run through all jobs in the short term queue one by one
-
-    job *to_check = short_queue.getStart();
-    while (to_check != NULL) {
-        job *shortest = new job();
-        shortest->time = 0;
-
-        if (shortest->time < to_check->time) {
-            shortest = to_check;
-        }
-
-        to_check = to_check->next;
-    }
-
-         //put the job in the processor
-    if (cpu_ready_flag) {
-        job *processing = short_queue.pop();
-
-
-    }
-
+    
+        // Process accumulated data
+    
     return 0;
 }
