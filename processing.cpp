@@ -21,13 +21,6 @@
 
 using namespace std;
 
-    // prototypes
-void manage_ltq(longQueue&, bool&, job*);
-void manage_stq(shortQueue&, longQueue&, IOdevice*, bool&);
-void manage_ioq(ioQueue&, CPU*);
-void manage_cpu(CPU*, job*, shortQueue&, bool&);
-void manage_iodevice(IOdevice*, ioQueue&, job*, bool&, bool&);
-
 /* manage_ltq
  * Author: Katelyn Schaffer
  * Other contributors:
@@ -35,18 +28,18 @@ void manage_iodevice(IOdevice*, ioQueue&, job*, bool&, bool&);
  * 
  * Description: Manages the longterm queue
  */
-void manage_ltq(longQueue& longterm_queue, bool& incoming_job, job* new_job) {
+void manage_ltq(longQueue& longterm_queue, job* new_job, FlagContainer& flags) {
         // Handle any current jobs in longterm queue
     if (!longterm_queue.isEmpty()) {
             // Increment wait time for all processes in queue
         longterm_queue.incrementAll();
     }
         // Handle incoming job if the longtern queue is not full
-    if (incoming_job && !longterm_queue.isFull()) {
+    if (flags.incoming_job && !longterm_queue.isFull()) {
             // Push incoming job to queue
         longterm_queue.add(new_job);
             // Remove incoming job flag
-        incoming_job = false;
+        flags.incoming_job = false;
     }
     if (longterm_queue.isFull()) {
                                                                                     // !! Queue is full. What do?
@@ -62,7 +55,7 @@ void manage_ltq(longQueue& longterm_queue, bool& incoming_job, job* new_job) {
  *
  * Description: Manages the shortterm queue
  */
-void manage_stq(shortQueue& shortterm_queue, longQueue& longterm_queue, IOdevice* io_device, bool& job_finished) {
+void manage_stq(shortQueue& shortterm_queue, longQueue& longterm_queue, IOdevice* io_device, FlagContainer& flags) {
         // Handle any current jobs in shortterm queue
     if (!shortterm_queue.isEmpty()) {
         // Increment wait time for all processes in queue
@@ -76,11 +69,11 @@ void manage_stq(shortQueue& shortterm_queue, longQueue& longterm_queue, IOdevice
             // Flag io device as available
         io_device->available = true;
             // Handle if the job is finished
-        if (job_finished) {
+        if (flags.job_finished) {
                 // (Decrement "more_jobs" / Remove job from the system)                 // ?? How do?
             
                 // Remove jon finished flag
-            job_finished = false;
+            flags.job_finished = false;
             
                 // Collect data
             total_response_time += io_device->process->response;
@@ -121,14 +114,14 @@ void manage_stq(shortQueue& shortterm_queue, longQueue& longterm_queue, IOdevice
  *
  * Description: Manages the CPU
  */
-void manage_cpu(CPU* cpu, job* entering_process, shortQueue& shortterm_queue, bool& interrupt) {
+void manage_cpu(CPU* cpu, job* entering_process, shortQueue& shortterm_queue, FlagContainer& flags) {
         // Handle if a process is suspended
     if (cpu->suspended) {
             // Decrement suspend timer
         cpu->suspend_timer--;
             // Check if interrupt is complete
         if (cpu->suspend_timer == 0) {
-            interrupt = false;
+            flags.interrupt = false;
             cpu->suspended = false;
         }
             // Otherwise, check if process is in CPU when
@@ -145,7 +138,7 @@ void manage_cpu(CPU* cpu, job* entering_process, shortQueue& shortterm_queue, bo
     if (!cpu->processing_stopped) {
         
             // Handle interrupt if suspend timer is up
-        if (interrupt && cpu->suspend_timer == 0) {
+        if (flags.interrupt && cpu->suspend_timer == 0) {
                 // Suspend any process that has the CPU currently
             if (cpu->process > 0) {
                 cpu->susp_process = cpu->process; // Suspend current process
@@ -241,9 +234,9 @@ void manage_ioq(ioQueue& io_queue, CPU* cpu) {
  *
  * Description: Manages the IO device
  */
-void manage_iodevice(IOdevice* io_device, ioQueue& io_queue, job* entering_io, bool& interrupt, bool& job_finished) {
+void manage_iodevice(IOdevice* io_device, ioQueue& io_queue, job* entering_io, FlagContainer& flags) {
         // Handle if no current interrupt
-    if (interrupt) {
+    if (flags.interrupt) {
             // Handle if process is in IO device
         if (entering_io->num == io_device->process->num) {
                 // Update IO timer
@@ -257,11 +250,11 @@ void manage_iodevice(IOdevice* io_device, ioQueue& io_queue, job* entering_io, b
                     // Interrupt if more CPU bursts to process
                 if (NEXT_CPU_BURST_LENGTH != 0) {                               // !!!! need way to check this
                         // Indicate interrupt
-                    interrupt = true;
+                    flags.interrupt = true;
                 }
                     // Finish up if all bursts are processed
                 else {
-                    job_finished = true;                                       // !! job finished flag
+                    flags.job_finished = true;                                       // !! job finished flag
                 }
             } // End handling finished burst
         } // End handling process in device

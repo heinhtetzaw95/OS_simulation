@@ -17,17 +17,22 @@ int main() {
     int job_timer = 0; // Keeps track of the time between job arrivals
     bool job_flag          = false; // Signals the a job has arrived
     
-        // new vars
-    bool job_finished = false;
-    bool incoming_job = false;
-    bool interrupt = false;
+        // Simulation devices
+    longQueue longterm_queue;
+    shortQueue shortterm_queue;
+    ioQueue io_queue;
     IOdevice io_device;
     CPU cpu;
     
+        // Initialize flags
+    FlagContainer flags;
+    flags.job_finished = false;
+    flags.incoming_job = false;
+    flags.interrupt = false;
     
-
          // initialize our job and jobs list
     job tempJob;
+    job* currJob;
     job job_list[];
 
          // initialize our
@@ -100,11 +105,11 @@ int main() {
     /// 4.1 //////////////////////////////////////////////////////////////////
         //while there are jobs to process
     while(JOBS_TO_PROCESS) {
-        //manage_ltq()
-        //manage_stq()
-        //manage_cpu()
-        //manage_ioq()
-        //manage_iodevice()
+        manage_ltq(longterm_queue, currJob, flags);
+        manage_stq(shortterm_queue, longterm_queue, &io_device, flags);
+        manage_cpu(&cpu, currJob, shortterm_queue, flags);
+        manage_ioq(io_queue, &cpu);
+        manage_iodevice(&io_device, io_queue, currJob, flags);
         
         //remove finished jobs?
         //increment clock
