@@ -13,9 +13,8 @@ int main() {
     //////////////////
 
         // old vars
-    int myClock = 0; // The simulator clock to keep track of the total time of the simulation run
+    int clock = 0; // The simulator clock to keep track of the total time of the simulation run
     int job_timer = 0; // Keeps track of the time between job arrivals
-    bool job_flag          = false; // Signals the a job has arrived
     
         // Simulation devices
     longQueue longterm_queue;
@@ -32,8 +31,8 @@ int main() {
     
          // initialize our job and jobs list
     job tempJob;
-    job* currJob;
-    job job_list[];
+    job* current_job;
+    job job_list[150];
 
          // initialize our
     ifstream infile("data.txt", ios::in);
@@ -41,36 +40,40 @@ int main() {
          //initialize our reading flag and job count
     bool reading = true;
     int job_count = 0;
+    int jobs_in_system = 0;
 
 
     //////////////////
     /// STEP 2 //////////////////////////////////////////////////////////////////
     //////////////////
 
-         //read and process data from our file
+         // Read and process data from our file
     while (reading) {
-        //create a new job
-        tempJob = new job();
-        //read in job information
+            // Create a new job
+        tempJob = *new job();
+            // Read in job information
         infile >> tempJob.num;
         infile >> tempJob.length;
         infile >> tempJob.arrival;
         infile >> tempJob.io_burst;
 
+            // Next value to read could be burst or sentinel
         int temp_input;
         infile >> temp_input;
 
+            // Continue to read until sentinel
         while (temp_input > 0){
-            //add CPU burst to temp job cpu burst array
+                // Add CPU burst to temp job cpu burst array
             tempJob.cpu_burst[tempJob.burst_count]=temp_input;
             tempJob.burst_count++;
             infile >> temp_input;
         }
 
-        // Add new job to job array
+            // Add new job to job array
         job_list[job_count] = tempJob;
         job_count++;
 
+            // Confirm we've reached the sentinel and finish reading
         if (temp_input == -1) {
             reading = false;
         }
@@ -80,21 +83,28 @@ int main() {
     //////////////////
     /// STEP 3 //////////////////////////////////////////////////////////////////
     //////////////////
+    
+    // Get first job into the system
 
     /// 3.1 //////////////////////////////////////////////////////////////////
+        // Update job timer
     job_timer++;
 
     /// 3.2 //////////////////////////////////////////////////////////////////
+        // When a job enters the system
     if (job_list[job_count].arrival == job_timer) {
             // Set job flag to true
-        job_flag = true;
+        flags.incoming_job = true;
+            // Get reference to job
+        current_job = &job_list[job_count];
             // record time of arrival
-
+        
             // reset job_timer to zero
         job_timer = 0;
             // increment count
-        job_count++;
+        total_jobs_run++;
             // increment more_jobs
+        jobs_in_system++;
     }
 
 
@@ -104,16 +114,38 @@ int main() {
 
     /// 4.1 //////////////////////////////////////////////////////////////////
         //while there are jobs to process
-    while(JOBS_TO_PROCESS) {
-        manage_ltq(longterm_queue, currJob, flags);
+    while(total_jobs_run < job_count) {
+        manage_ltq(longterm_queue, current_job, flags);
         manage_stq(shortterm_queue, longterm_queue, &io_device, flags);
-        manage_cpu(&cpu, currJob, shortterm_queue, flags);
+        manage_cpu(&cpu, current_job, shortterm_queue, flags);
         manage_ioq(io_queue, &cpu);
-        manage_iodevice(&io_device, io_queue, currJob, flags);
+        manage_iodevice(&io_device, io_queue, current_job, flags);
         
-        //remove finished jobs?
-        //increment clock
-        //check for incoming processes
+            // Remove finished jobs?
+        jobs_in_system--;
+            // Increment clock
+        clock++;
+        
+            // Check for incoming processes
+        // GOTO 3.1 LOL
+        
+            // Update job timer
+        job_timer++;
+        
+            // When a job enters the system
+        if (job_list[job_count].arrival == job_timer) {
+                // Set job flag to true
+            flags.incoming_job = true;
+                // record time of arrival
+            
+                // reset job_timer to zero
+            job_timer = 0;
+                // increment count
+            total_jobs_run++;
+                // increment more_jobs
+            jobs_in_system++;
+        }
+        
     }
     
         // Process accumulated data

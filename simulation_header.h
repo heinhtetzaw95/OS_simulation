@@ -138,6 +138,7 @@ static int IOQ_time = 0;					//total I/O Queue wait time for all jobs
 
 static job *temp = NULL;					//temporary space
 
+int total_jobs_run = 0;
 int total_response_time = 0;
 int total_productive_time = 0;
 int total_turnaround_time = 0;
