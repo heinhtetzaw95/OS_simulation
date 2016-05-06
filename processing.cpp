@@ -1,7 +1,7 @@
 /*
  *	File Name				:	processing.cpp
- *	Primary Author			:
- *	Contributing Author(s)	:
+ *	Primary Author			:   Katie Schaffer
+ *	Contributing Author(s)	:   Francesco Polizzi
  *	Date Created			:	26 April 2016
  *	Date Last Modified		:	26 April 2016
  *
@@ -25,57 +25,55 @@ using namespace std;
  * Author: Katelyn Schaffer
  * Other contributors:
  * Last revised: April 29, 2016
- * 
+ *
  * Description: Manages the longterm queue
  */
 void manage_ltq(longQueue& longterm_queue, job* new_job, FlagContainer& flags) {
-        // Handle any current jobs in longterm queue
+    // Handle any current jobs in longterm queue
     if (!longterm_queue.isEmpty()) {
-            // Increment wait time for all processes in queue
+        // Increment wait time for all processes in queue
         longterm_queue.incrementAll();
     }
-        // Handle incoming job if the longtern queue is not full
+    // Handle incoming job if the longtern queue is not full
     if (flags.incoming_job && !longterm_queue.isFull()) {
-            // Push incoming job to queue
+        // Push incoming job to queue
         longterm_queue.add(new_job);
-            // Remove incoming job flag
+        // Remove incoming job flag
         flags.incoming_job = false;
     }
-    if (longterm_queue.isFull()) {
-                                                                                    // !! Queue is full. What do?
-    }
-    
+
     return;
 }
 
 /* manage_stq
  * Author: Katelyn Schaffer
- * Other contributors:
+ * Other contributors: Francesco Polizzi
  * Last revised: April 29, 2016
  *
  * Description: Manages the shortterm queue
  */
 void manage_stq(shortQueue& shortterm_queue, longQueue& longterm_queue, IOdevice* io_device, FlagContainer& flags) {
-        // Handle any current jobs in shortterm queue
+    // Handle any current jobs in shortterm queue
     if (!shortterm_queue.isEmpty()) {
-            // Increment wait time for all processes in queue
+        // Increment wait time for all processes in queue
         shortterm_queue.incrementAll();
     }
     
-        // Handle any job that has just finished with the I/O device
+    // Handle any job that has just finished with the I/O device
     if (io_device->complete) {
-            // Remove IO completion indicator
+        // Remove IO completion indicator
         io_device->complete = false;
-            // Flag io device as available
+        // Flag io device as available
         io_device->available = true;
-            // Handle if the job is finished
+        // Handle if the job is finished
         if (io_device->job_finished) {
-                // Remove job from the system
+            // Remove job from the system
             flags.jobs_in_system--;
-                // Remove job finished flag
+            io_device->process = NULL;
+            // Remove job finished flag
             io_device->job_finished = false;
             
-                // Collect data
+            // Collect data
             total_response_time += io_device->process->response;
             total_productive_time += io_device->process->length;
             total_turnaround_time += io_device->process->turnaround;
@@ -83,13 +81,13 @@ void manage_stq(shortQueue& shortterm_queue, longQueue& longterm_queue, IOdevice
             total_ltq_wait += io_device->process->time_in_longQ;
             total_ioq_wait += io_device->process->time_in_ioQ;
         }
-            // If not finished, place back on shorttterm queue
+        // If not finished, place back on shorttterm queue
         else {
-                // Check for room in shortterm queue
+            // Check for room in shortterm queue
             if (!shortterm_queue.isFull()) {
-                    // Place the process in the shortterm queue
+                // Place the process in the shortterm queue
                 shortterm_queue.add(io_device->process);
-                    // Reset IO device
+                // Reset IO device
                 io_device->process = nullptr;
             }
             else {
@@ -98,9 +96,9 @@ void manage_stq(shortQueue& shortterm_queue, longQueue& longterm_queue, IOdevice
         }
     } // End handling job finished with IO
     
-        // Check for processes in longterm queue
+    // Check for processes in longterm queue
     if (!shortterm_queue.isFull() && !longterm_queue.isEmpty() ) {
-            // Move process from longterm queue to shortterm queue
+        // Move process from longterm queue to shortterm queue
         shortterm_queue.add(longterm_queue.getNext());                                  // !! Confirm we want to use "Next"
     }
     
@@ -109,91 +107,89 @@ void manage_stq(shortQueue& shortterm_queue, longQueue& longterm_queue, IOdevice
 
 /* manage_cpu
  * Author: Katelyn Schaffer
- * Other contributors:
+ * Other contributors: Francesco Polizzi
  * Last revised: April 29, 2016
  *
  * Description: Manages the CPU
  */
-void manage_cpu(CPU* cpu, job* entering_process, shortQueue& shortterm_queue, FlagContainer& flags) {
-        // Handle if a process is suspended
+void manage_cpu(CPU* cpu, shortQueue& shortterm_queue, FlagContainer& flags) {
+    // Handle if a process is suspended
     if (cpu->suspended) {
-            // Decrement suspend timer
+        // Decrement suspend timer
         cpu->suspend_timer--;
-            // Check if interrupt is complete
+        // Check if interrupt is complete
         if (cpu->suspend_timer == 0) {
             flags.interrupt = false;
             cpu->suspended = false;
         }
-            // Otherwise, check if process is in CPU when
-            //  interrupt occured
+        // Otherwise, check if process is in CPU when
+        //  interrupt occured
         else if (cpu->susp_process != nullptr) {
-                // Update CPU wait counter
+            // Update CPU wait counter
             cpu->total_wait++;
-                // Flag that processing has stopped
+            // Flag that processing has stopped
             cpu->processing_stopped = true;
         }
     } // End suspend handling
     
-        // If processing has not been halted
+    // If processing has not been halted
     if (!cpu->processing_stopped) {
         
-            // Handle interrupt if suspend timer is up
+        // Handle interrupt if suspend timer is up
         if (flags.interrupt && cpu->suspend_timer == 0) {
-                // Suspend any process that has the CPU currently
+            // Suspend any process that has the CPU currently
             if (cpu->process != nullptr) {
-                     // Suspend current process
+                // Suspend current process
                 cpu->susp_process = cpu->process;
-                    // Now CPU is free of processes
+                // Now CPU is free of processes
                 cpu->process = nullptr;
             }
-                // Reset suspend timer
+            // Reset suspend timer
             cpu->suspend_timer = SUSPEND_TIME;
-                // Flag suspension
+            // Flag suspension
             cpu->suspended = true;
         }
-            // Handle if no interrupt
+        // Handle if no interrupt
         else {
-                // Handle any process that's in the CPU and check for completion
+            // Handle any process that's in the CPU and check for completion
             if (cpu->process != nullptr) {
-                    // Update timer of current CPU burst
-                cpu->timer++;
-                    // Check completion
-                if (entering_process->time_in_cpu == entering_process->cpu_burst[entering_process->burst_num]) { // !!
-                        // Flag completion
+                // Update timer of current CPU burst
+                cpu->process->cpu_burst[cpu->process->burst_num]--;
+                // Check completion
+                if (cpu->process->time_in_cpu == cpu->process->cpu_burst[cpu->process->burst_num]) { // !!
+                    // Flag completion
                     cpu->complete = true;
-                        // Increment burst
-                    entering_process->burst_num++;
-                        // Reset burst timer
+                    // Increment burst
+                    cpu->process->burst_num++;
+                    // Reset burst timer
                     cpu->timer = 0;
                 }
             }
-                // Handle any process with completed suspension or get next process
+            // Handle any process with completed suspension or get next process
             else {
-                    // Unsuspend any process that's suspended
-                if (entering_process->num == cpu->suspended) {
-                        // Give entering process the CPU
+                // Unsuspend any process that's suspended
+                if (cpu->suspended) {
+                    // Give entering process the CPU
                     cpu->process = entering_process;
-                        // Increment cpu wait counter
+                    // Increment cpu wait counter
                     cpu->total_wait++;                                                           // !! Again?!
-                        // Process is no longer suspended
-                    cpu->suspended = 0;
+                    // Process is no longer suspended
+                    cpu->suspended = false;
                 }
-                    // Get next job for the CPU if applicable
+                // Get next job for the CPU if applicable
                 else if (!shortterm_queue.isEmpty() && cpu->ready) {
-                        // Get process from the shortterm queue
-                    entering_process = shortterm_queue.getNext();
-                        // Give process to the CPU
-                    cpu->process = entering_process;
-                        // Indicate CPU is not ready for more processes
+                    // Give process to the CPU
+                    cpu->process = shortterm_queue.getNext();
+                    // Indicate CPU is not ready for more processes
                     cpu->ready = false;
-                        // Initialize cpu process timer
+                    // Initialize cpu process timer
                     cpu->timer = 0;
                 }
             } // End handling process with completed suspension or next process
         }   // End handling no interrupt
     } // End handling if processing has not halted
     
-        // Remove CPU stop flag
+    // Remove CPU stop flag
     cpu->processing_stopped = false;
     
     return;
@@ -207,21 +203,21 @@ void manage_cpu(CPU* cpu, job* entering_process, shortQueue& shortterm_queue, Fl
  * Description: Manages the IO queue
  */
 void manage_ioq(ioQueue& io_queue, CPU* cpu) {
-        // Handle processes in IO queue
+    // Handle processes in IO queue
     if (!io_queue.isEmpty()) {
-            // Increment wait times
+        // Increment wait times
         io_queue.incrementAll();
     }
     
-        // Handle any process that the CPU just finished processing
+    // Handle any process that the CPU just finished processing
     if (cpu->complete && !io_queue.isFull()) {
-            // Move process from CPU to IO queue
+        // Move process from CPU to IO queue
         io_queue.add(cpu->process);
-            // Reset CPU process num
-        cpu->process->num = 0;
-            // Indicate CPU is ready for more processes
+        // Reset CPU process num
+        cpu->process = nullptr;
+        // Indicate CPU is ready for more processes
         cpu->ready = true;
-            // Reset cpu_complete flag
+        // Reset cpu_complete flag
         cpu->complete = false;
     }
     
@@ -230,48 +226,47 @@ void manage_ioq(ioQueue& io_queue, CPU* cpu) {
 
 /* manage_iodevice
  * Author: Katelyn Schaffer
- * Other contributors:
+ * Other contributors: Francesco Polizzi
  * Last revised: April 29, 2016
  *
  * Description: Manages the IO device
  */
-void manage_iodevice(IOdevice* io_device, ioQueue& io_queue, job* entering_io, FlagContainer& flags) {
-        // Handle if no current interrupt
-    if (flags.interrupt) {
-            // Handle if process is in IO device
-        if (entering_io->num == io_device->process->num) {
-                // Update IO timer
+void manage_iodevice(IOdevice* io_device, ioQueue& io_queue, FlagContainer& flags) {
+    // Handle if no current interrupt
+    if (!flags.interrupt) {
+        // Handle if process is in IO device
+        if (io_device->process != nullptr) {
+            // Update IO timer
             io_device->timer++;
-                // If finished burst
+            // If finished burst
             if (io_device->timer == io_device->burst_length) {
-                    // Indicate IO complete
+                // Indicate IO complete
                 io_device->complete = true;
-                    // Reset IO device
+                // Reset IO device
                 io_device->process = nullptr;
-                    // Interrupt if more CPU bursts to process
-                if (NEXT_CPU_BURST_LENGTH != 0) {                               // !!!! need way to check this
-                        // Indicate interrupt
+                // Interrupt if more CPU bursts to process
+                if (io_device->process->cpu_burst[io_device->process->burst_num+1] <= 0)
+                {
+                    // Indicate interrupt
                     flags.interrupt = true;
                 }
-                    // Finish up if all bursts are processed
+                // Finish up if all bursts are processed
                 else {
                     io_device->job_finished = true;
                 }
             } // End handling finished burst
         } // End handling process in device
-
-            // If no processes in IO device, handle
-            //  any processes in IO queue
+        
+        // If no processes in IO device, handle
+        //  any processes in IO queue
         else {
-                // Check for processes in IO queue and device availability
+            // Check for processes in IO queue and device availability
             if (!io_queue.isEmpty() && io_device->available) {
-                    // Get process from queue
-                entering_io = io_queue.getNext();
-                    // Give IO device to process
-                io_device->process = entering_io;
-                    // Reset IO timer
+                // Give IO device to process
+                io_device->process = io_queue.getNext();
+                // Reset IO timer
                 io_device->timer = 0;
-                    // Indicate IO device is busy
+                // Indicate IO device is busy
                 io_device->available = false;
             }
         } // End handling IO queue

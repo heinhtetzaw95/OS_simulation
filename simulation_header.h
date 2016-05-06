@@ -31,7 +31,8 @@ struct job {
 	int arrival;					//arriaval time
 	int io_burst;					//the length of time this job requires an I/O device
 	int cpu_burst[cpu_burst_max];	//the time this process requires the CPU
-    int burst_num;                  // current burst
+    int burst_num;                  //current burst
+    int burst_count;                //total number of bursts
 
 				//create variables for the followings
 

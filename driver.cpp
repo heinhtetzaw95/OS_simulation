@@ -71,7 +71,6 @@ int main() {
         
             // Initialize other job variables
         tempJob.burst_num = 0;
-        tempJob.arrival = clock;
         
             // Initialize burst list to all -1
         for (int burst_num = 0; burst_num < cpu_burst_max; burst_num++) {
@@ -113,13 +112,13 @@ int main() {
 
     /// 3.2 //////////////////////////////////////////////////////////////////
         // When a job enters the system
-    if (job_list[job_count].arrival == job_timer) {
+    if (job_list[total_jobs_run].inter_arrival == job_timer) {
             // Set job flag to true
         flags.incoming_job = true;
             // Get reference to job
-        current_job = &job_list[job_count];
+        current_job = &job_list[total_jobs_run];
             // record time of arrival
-        
+        current_job->arrival = clock;
             // reset job_timer to zero
         job_timer = 0;
             // increment count
@@ -142,8 +141,6 @@ int main() {
         manage_ioq(io_queue, &cpu);
         manage_iodevice(&io_device, io_queue, current_job, flags);
         
-            // Remove finished jobs?
-        
             // Increment clock
         clock++;
         
@@ -154,13 +151,13 @@ int main() {
         job_timer++;
         
             // When a job enters the system
-        if (job_list[job_count].arrival == job_timer) {
+        if (job_list[total_jobs_run].arrival == job_timer) {
                 // Set job flag to true
             flags.incoming_job = true;
                 // Get reference to job
-            current_job = &job_list[job_count];
+            current_job = &job_list[total_jobs_run];
                 // record time of arrival
-            
+            current_job->arrival = clock;
                 // reset job_timer to zero
             job_timer = 0;
                 // increment count
