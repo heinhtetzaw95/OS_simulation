@@ -66,8 +66,17 @@ int main() {
             // Read in job information
         infile >> tempJob.num;
         infile >> tempJob.length;
-        infile >> tempJob.arrival;
+        infile >> tempJob.inter_arrival;
         infile >> tempJob.io_burst;
+        
+            // Initialize other job variables
+        tempJob.burst_num = 0;
+        tempJob.arrival = clock;
+        
+            // Initialize burst list to all -1
+        for (int burst_num = 0; burst_num < cpu_burst_max; burst_num++) {
+            tempJob.cpu_burst[burst_num] = -1;
+        }
 
             // Next value to read could be burst or sentinel
         int temp_input;

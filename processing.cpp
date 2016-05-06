@@ -58,7 +58,7 @@ void manage_ltq(longQueue& longterm_queue, job* new_job, FlagContainer& flags) {
 void manage_stq(shortQueue& shortterm_queue, longQueue& longterm_queue, IOdevice* io_device, FlagContainer& flags) {
         // Handle any current jobs in shortterm queue
     if (!shortterm_queue.isEmpty()) {
-        // Increment wait time for all processes in queue
+            // Increment wait time for all processes in queue
         shortterm_queue.incrementAll();
     }
     
@@ -126,9 +126,9 @@ void manage_cpu(CPU* cpu, job* entering_process, shortQueue& shortterm_queue, Fl
         }
             // Otherwise, check if process is in CPU when
             //  interrupt occured
-        else if (cpu->susp_process->num == entering_process->num) {
+        else if (cpu->susp_process != nullptr) {
                 // Update CPU wait counter
-            //cpu->wait++;                                                                              !! cpu wait counter??
+            cpu->total_wait++;
                 // Flag that processing has stopped
             cpu->processing_stopped = true;
         }
@@ -141,8 +141,10 @@ void manage_cpu(CPU* cpu, job* entering_process, shortQueue& shortterm_queue, Fl
         if (flags.interrupt && cpu->suspend_timer == 0) {
                 // Suspend any process that has the CPU currently
             if (cpu->process != nullptr) {
-                cpu->susp_process = cpu->process; // Suspend current process
-                cpu->process = nullptr;            // Now CPU is free of processes
+                     // Suspend current process
+                cpu->susp_process = cpu->process;
+                    // Now CPU is free of processes
+                cpu->process = nullptr;
             }
                 // Reset suspend timer
             cpu->suspend_timer = SUSPEND_TIME;
@@ -152,13 +154,15 @@ void manage_cpu(CPU* cpu, job* entering_process, shortQueue& shortterm_queue, Fl
             // Handle if no interrupt
         else {
                 // Handle any process that's in the CPU and check for completion
-            if (entering_process->num == cpu->process->num) {
+            if (cpu->process != nullptr) {
                     // Update timer of current CPU burst
                 cpu->timer++;
                     // Check completion
-                if (entering_process->time_in_cpu == entering_process->cpu_burst_length) {      // !! cpu_burst_length ?
+                if (entering_process->time_in_cpu == entering_process->cpu_burst[entering_process->burst_num]) { // !!
                         // Flag completion
                     cpu->complete = true;
+                        // Increment burst
+                    entering_process->burst_num++;
                         // Reset burst timer
                     cpu->timer = 0;
                 }
@@ -170,7 +174,7 @@ void manage_cpu(CPU* cpu, job* entering_process, shortQueue& shortterm_queue, Fl
                         // Give entering process the CPU
                     cpu->process = entering_process;
                         // Increment cpu wait counter
-                    //cpu->wait++;                                                                      !! cpu wait counter??
+                    cpu->total_wait++;                                                           // !! Again?!
                         // Process is no longer suspended
                     cpu->suspended = 0;
                 }

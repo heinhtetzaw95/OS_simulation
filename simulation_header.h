@@ -27,10 +27,11 @@ struct job {
 				//include the following information in the job
 	int num;						//job number
 	int length;						//(CPU bursts + I/O bursts) time
+    int inter_arrival;              //
 	int arrival;					//arriaval time
 	int io_burst;					//the length of time this job requires an I/O device
 	int cpu_burst[cpu_burst_max];	//the time this process requires the CPU
-	int burst_count = 0;			//number of cpu bursts given in the data file
+    int burst_num;                  // current burst
 
 				//create variables for the followings
 
@@ -160,7 +161,6 @@ struct IOdevice {
 };
 
 struct CPU {
-    //int     wait;                       //
     //int     process_id;                 //
     int     timer;                      // Keeps track of the current CPU burst
     bool    complete;                   // Signals the completion of a CPU burst
@@ -168,6 +168,7 @@ struct CPU {
     bool    processing_stopped;         // Signals to stop CPU job processing
     bool    suspended;                  // Signals context switch to handle interrupt
     int     suspend_timer;              // Keeps track of current interrupt time
+    int     total_wait;                       // Total time spent waiting (in suspension)
     job*    susp_process;               // Pointer to suspended process
     job*    process;                    // Pointer to which job has the CPU
 };
