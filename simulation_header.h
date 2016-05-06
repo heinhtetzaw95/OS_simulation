@@ -54,7 +54,7 @@ private:
 
 public:
 	tree() { root = NULL; jobCount = 0;};		//create constructor function
-	bool add(job * );						//add the items in the tree, sorted by **JOB NUMBER**
+	bool add(job * );							//add the items in the tree, sorted by **JOB NUMBER**
 	bool add_jobLength(job * );					//add the job in the tree, sorted by **JOB LENGTH**
 
 	job * getJob(int JobNum);					//get the pointer of a certain job by its job number
@@ -81,7 +81,7 @@ public:
 	int getRear() { return rear; };		//returns the array number of lsatmost node
 	int getFront() { return front; };	//returns the array number of frontmost node
 	int getSize() { return size; };		//returns the current number of jobs in the queue
-	bool incrementAll();					//increment all the jobs inside the queue
+	bool incrementAll();				//increment all the jobs inside the queue
 };
 
 		//declare and define short queue and its required functions
