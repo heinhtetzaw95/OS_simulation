@@ -3,7 +3,7 @@
  *	Primary Author			:   Katie Schaffer
  *	Contributing Author(s)	:   Francesco Polizzi
  *	Date Created			:	26 April 2016
- *	Date Last Modified		:	26 April 2016
+ *	Date Last Modified		:	6 May 2016
  *
  *	Description		:
  *
@@ -23,8 +23,8 @@ using namespace std;
 
 /* manage_ltq
  * Author: Katelyn Schaffer
- * Other contributors:
- * Last revised: April 29, 2016
+ * Other contributors: Francesco Polizzi
+ * Last revised: 6 May 2016
  *
  * Description: Manages the longterm queue
  */
@@ -48,7 +48,7 @@ void manage_ltq(longQueue& longterm_queue, job* new_job, FlagContainer& flags) {
 /* manage_stq
  * Author: Katelyn Schaffer
  * Other contributors: Francesco Polizzi
- * Last revised: April 29, 2016
+ * Last revised: 6 May 2016
  *
  * Description: Manages the shortterm queue
  */
@@ -108,7 +108,7 @@ void manage_stq(shortQueue& shortterm_queue, longQueue& longterm_queue, IOdevice
 /* manage_cpu
  * Author: Katelyn Schaffer
  * Other contributors: Francesco Polizzi
- * Last revised: April 29, 2016
+ * Last revised: 6 May 2016
  *
  * Description: Manages the CPU
  */
@@ -197,8 +197,8 @@ void manage_cpu(CPU* cpu, shortQueue& shortterm_queue, FlagContainer& flags) {
 
 /* manage_ioq
  * Author: Katelyn Schaffer
- * Other contributors:
- * Last revised: April 29, 2016
+ * Other contributors: Francesco Polizzi, Jeremey Viner
+ * Last revised: 6 May 2016
  *
  * Description: Manages the IO queue
  */
@@ -226,8 +226,8 @@ void manage_ioq(ioQueue& io_queue, CPU* cpu) {
 
 /* manage_iodevice
  * Author: Katelyn Schaffer
- * Other contributors: Francesco Polizzi
- * Last revised: April 29, 2016
+ * Other contributors: Francesco Polizzi, Jeremey Viner
+ * Last revised: 6 May 2016
  *
  * Description: Manages the IO device
  */
