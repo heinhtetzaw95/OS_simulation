@@ -25,9 +25,23 @@ int main() {
     
         // Initialize flags
     FlagContainer flags;
-    flags.job_finished = false;
+    flags.jobs_in_system = 0;
     flags.incoming_job = false;
     flags.interrupt = false;
+    
+        // Initialize IO device
+    io_device.available = true;
+    io_device.complete = false;
+    io_device.job_finished = false;
+    io_device.timer = 0;
+    //io_device.burst_length;
+    
+        // Initialize CPU
+    cpu.ready = true;
+    cpu.timer = 0;
+    cpu.complete = false;
+    cpu.processing_stopped = false;
+    cpu.suspended = false;
     
          // initialize our job and jobs list
     job tempJob;
@@ -40,8 +54,6 @@ int main() {
          //initialize our reading flag and job count
     bool reading = true;
     int job_count = 0;
-    int jobs_in_system = 0;
-
 
     //////////////////
     /// STEP 2 //////////////////////////////////////////////////////////////////
@@ -104,7 +116,7 @@ int main() {
             // increment count
         total_jobs_run++;
             // increment more_jobs
-        jobs_in_system++;
+        flags.jobs_in_system++;
     }
 
 
@@ -114,7 +126,7 @@ int main() {
 
     /// 4.1 //////////////////////////////////////////////////////////////////
         //while there are jobs to process
-    while(total_jobs_run < job_count) {
+    while(total_jobs_run <= job_count) {
         manage_ltq(longterm_queue, current_job, flags);
         manage_stq(shortterm_queue, longterm_queue, &io_device, flags);
         manage_cpu(&cpu, current_job, shortterm_queue, flags);
@@ -122,7 +134,7 @@ int main() {
         manage_iodevice(&io_device, io_queue, current_job, flags);
         
             // Remove finished jobs?
-        jobs_in_system--;
+        
             // Increment clock
         clock++;
         
@@ -136,6 +148,8 @@ int main() {
         if (job_list[job_count].arrival == job_timer) {
                 // Set job flag to true
             flags.incoming_job = true;
+                // Get reference to job
+            current_job = &job_list[job_count];
                 // record time of arrival
             
                 // reset job_timer to zero
@@ -143,7 +157,7 @@ int main() {
                 // increment count
             total_jobs_run++;
                 // increment more_jobs
-            jobs_in_system++;
+            flags.jobs_in_system++;
         }
         
     }

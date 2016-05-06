@@ -69,11 +69,11 @@ void manage_stq(shortQueue& shortterm_queue, longQueue& longterm_queue, IOdevice
             // Flag io device as available
         io_device->available = true;
             // Handle if the job is finished
-        if (flags.job_finished) {
-                // (Decrement "more_jobs" / Remove job from the system)                 // ?? How do?
-            
-                // Remove jon finished flag
-            flags.job_finished = false;
+        if (io_device->job_finished) {
+                // Remove job from the system
+            flags.jobs_in_system--;
+                // Remove job finished flag
+            io_device->job_finished = false;
             
                 // Collect data
             total_response_time += io_device->process->response;
@@ -87,8 +87,8 @@ void manage_stq(shortQueue& shortterm_queue, longQueue& longterm_queue, IOdevice
         else {
                 // Check for room in shortterm queue
             if (!shortterm_queue.isFull()) {
-                    // Place the process in the shortterm queue                        // ?? What process?
-            
+                    // Place the process in the shortterm queue
+                shortterm_queue.add(io_device->process);
                     // Reset IO device
                 io_device->process = nullptr;
             }
@@ -128,7 +128,7 @@ void manage_cpu(CPU* cpu, job* entering_process, shortQueue& shortterm_queue, Fl
             //  interrupt occured
         else if (cpu->susp_process->num == entering_process->num) {
                 // Update CPU wait counter
-            cpu->wait++;
+            //cpu->wait++;                                                                              !! cpu wait counter??
                 // Flag that processing has stopped
             cpu->processing_stopped = true;
         }
@@ -140,9 +140,9 @@ void manage_cpu(CPU* cpu, job* entering_process, shortQueue& shortterm_queue, Fl
             // Handle interrupt if suspend timer is up
         if (flags.interrupt && cpu->suspend_timer == 0) {
                 // Suspend any process that has the CPU currently
-            if (cpu->process > 0) {
+            if (cpu->process != nullptr) {
                 cpu->susp_process = cpu->process; // Suspend current process
-                cpu->process = 0;            // Now CPU is free of processes
+                cpu->process = nullptr;            // Now CPU is free of processes
             }
                 // Reset suspend timer
             cpu->suspend_timer = SUSPEND_TIME;
@@ -170,7 +170,7 @@ void manage_cpu(CPU* cpu, job* entering_process, shortQueue& shortterm_queue, Fl
                         // Give entering process the CPU
                     cpu->process = entering_process;
                         // Increment cpu wait counter
-                    cpu->wait++;
+                    //cpu->wait++;                                                                      !! cpu wait counter??
                         // Process is no longer suspended
                     cpu->suspended = 0;
                 }
@@ -180,9 +180,6 @@ void manage_cpu(CPU* cpu, job* entering_process, shortQueue& shortterm_queue, Fl
                     entering_process = shortterm_queue.getNext();
                         // Give process to the CPU
                     cpu->process = entering_process;
-                        // Update queue
-                                                                            // !! not necessary if getNext() already deletes job from queue
-
                         // Indicate CPU is not ready for more processes
                     cpu->ready = false;
                         // Initialize cpu process timer
@@ -192,7 +189,7 @@ void manage_cpu(CPU* cpu, job* entering_process, shortQueue& shortterm_queue, Fl
         }   // End handling no interrupt
     } // End handling if processing has not halted
     
-        // Flag CPU as unstopped
+        // Remove CPU stop flag
     cpu->processing_stopped = false;
     
     return;
@@ -254,7 +251,7 @@ void manage_iodevice(IOdevice* io_device, ioQueue& io_queue, job* entering_io, F
                 }
                     // Finish up if all bursts are processed
                 else {
-                    flags.job_finished = true;                                       // !! job finished flag
+                    io_device->job_finished = true;
                 }
             } // End handling finished burst
         } // End handling process in device
@@ -265,11 +262,9 @@ void manage_iodevice(IOdevice* io_device, ioQueue& io_queue, job* entering_io, F
                 // Check for processes in IO queue and device availability
             if (!io_queue.isEmpty() && io_device->available) {
                     // Get process from queue
-                entering_io = io_queue.getNext();                               // !! get number or job?
+                entering_io = io_queue.getNext();
                     // Give IO device to process
                 io_device->process = entering_io;
-                    // (Delete job from IO queue)
-                
                     // Reset IO timer
                 io_device->timer = 0;
                     // Indicate IO device is busy

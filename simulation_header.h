@@ -150,30 +150,32 @@ int total_ioq_wait = 0;
 
 
 struct IOdevice {
-    bool    available;
-    bool    complete;
-    int     timer;
-    int     burst_length;
-    job*    process;
+    bool    available;                  // Signals that the IO device is available
+    bool    complete;                   // Signals the completion of an IO burst
+    int     timer;                      // Indicates the current IO burst
+    int     burst_length;               //
+    bool    job_finished;               // Signals that a job is finished
+    job*    process;                    // Pointer to the process in the IO device
+    job*    entering_process;           // Pointer to the process entering the IO device
 };
 
 struct CPU {
-    int     wait;
-    int     process_id;
-    int     timer;
-    bool    complete;
-    bool    ready;
-    bool    processing_stopped;
-    bool    suspended;
-    int     suspend_timer;
-    job*    susp_process;
-    job*    process;
+    //int     wait;                       //
+    //int     process_id;                 //
+    int     timer;                      // Keeps track of the current CPU burst
+    bool    complete;                   // Signals the completion of a CPU burst
+    bool    ready;                      // Signals that the CPU is available
+    bool    processing_stopped;         // Signals to stop CPU job processing
+    bool    suspended;                  // Signals context switch to handle interrupt
+    int     suspend_timer;              // Keeps track of current interrupt time
+    job*    susp_process;               // Pointer to suspended process
+    job*    process;                    // Pointer to which job has the CPU
 };
 
 struct FlagContainer {
-    bool    job_finished;
-    bool    incoming_job;
-    bool    interrupt;
+    int     jobs_in_system;             // Number of jobs currently in the system
+    bool    incoming_job;               // Signals that a job has arrived
+    bool    interrupt;                  // Signals that an interrupt is in progress
 };
 
 void manage_ltq(longQueue&, job*, FlagContainer&);
