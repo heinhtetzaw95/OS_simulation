@@ -1,0 +1,55 @@
+//************************************  PROGRAM IDENTIFICATION  ***************************************
+//*                                                                                                   *
+//*   PROGRAM NAME: SIMULATION GROUP PROJECT                                       Grade: _________   *
+//*                                                                                                   *
+//*   PROGRAM AUTHORS:            NAMES                          SIGNATURES                           *
+//*                                                                                                   *
+//*                           JEREMY VINER              ___________________________                   *
+//*                                                                                                   *
+//*                        FRANCESCO POLLIZI            ___________________________                   *
+//*                                                                                                   *
+//*                           HEIN HTET ZAW             ___________________________                   *
+//*                                                                                                   *
+//*                          KATIE SCHAFFER             ___________________________                   *
+//*                                                                                                   *
+//*                                                                                                   *
+//*   COURSE #:  CSC 40600 11                                                 DUE DATE: May 11, 2016  *
+//*                                                                                                   *
+//*****************************************************************************************************
+//*****************************************************************************************************
+//*                                                                                                   *
+//*  PROGRAM DESCRIPTION: THIS PROGRAM IS TO SIMULATE THE OPERATIONS OF AN OPERATING SYSTEM AS IT     *
+//*                       PROCESSES A STREAM OF INCOMING PROCESSES.                                   *
+//*                       THE SIMULATION EMPLOYES: ONE PROCESSOR(CPU)                                 *
+//*                                                ONE I/O DEVICE                                     *
+//*                                                ONE LONG TERM QUEUE OF 60 SPACES                   *
+//*                                                ONE SHORT TERM QUEUE OF 30 SPACES                  *
+//*                                                ONE I/O QUEUE.                                     *
+//*  THE INITIAL ALGORITHM WILL BE "FCFS" FOR SHORT TERM QUEUE.                                       *
+//*                                                                                                   *
+//*                                  EXTRA CREDIT OPPORTUNITY 1                                       *
+//*                                  ==========================                                       *
+//*  EMPLOYING EITHER ONE OF THESE ALGORITHMS WILL BE FOR 10 EXTRA CREDIT.                            *
+//*  ROUND-ROBIN | SHORTEST REMAINING TIME NEXT | SHORTEST JOB FIRST | HIGHEST-RESPONSE-RATIO NEXT    *
+//*                                                                                                   *
+//*  OUTPUT SHOULD INCLUDE: CALCULATED AVERAGE                                                        *
+//*                         VARIANCE                                                                  *
+//*                         STANDARD DEVIATION OF THE INTER ARRIVAL TIMES                             *
+//*                         THE JOB LENGTHS                                                           *
+//*                         THE I/O BURST LENGTHS                                                     *
+//*                         THE CPU BURST LENGTHS           (OF ALL JOBS)                             *
+//*                                                                                                   *
+//*                                   EXTRA CREDIT OPPORTUNITY 2                                      *
+//*                                   ==========================                                      *
+//*  SUBMITTING A WRITTEN REPORT WILL BE ANOTHER 10 POINTS EXTRA CREDIT. THE REPORT SHOULD INCLUDE:   *
+//*                THE TITLE OF THE REPORT                                                            *
+//*                THE NAMES OF THE TEAM MEMBERS                                                      *
+//*                NUMBER OF JOBS PROCESSED                                                           *
+//*                NUMBER OF MAJOR DEVISES (CPU, STQ, ETC.) USED                                      *
+//*                TYPE OF SCHEDULING ALGORITHM(S) USED AND ON WHICH DEVICES (CPU, I/O, AND QUEUES)   *
+//*                ANY OTHER INFORMATION THE TEAM MAY DEEM APPROPIATE                                 *
+//*                IF THE PROGRAM EMPLYS A SECOND ALGORITHM, AN OUTLINE OF THE ALGORITHM (PSEUDOCODE) *
+//*				          USED IN THE SIMULATION TO MANAGE THE SHORT TERM QUEUE                       *
+//*                A MINIMUM OF (3) WAYS IN WHICH THE SIMULATION CAN BE ENHANCED (MAKE MORE REALISTIC)*
+//*                                                                                                   *
+//*****************************************************************************************************
