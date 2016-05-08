@@ -3,7 +3,7 @@
 *	Primary Author			:	Hein Htet Zaw
 *	Contributing Author(s)	:	
 *	Date Created			:	26 April 2016
-*	Date Last Modified		:	3 May 2016
+*	Date Last Modified		:	7 May 2016
 *	
 *	Description		:	This is the header file where all the global variables and data structures
 *						are declared and defined.
@@ -27,12 +27,12 @@ struct job {
 				//include the following information in the job
 	int num;						//job number
 	int length;						//(CPU bursts + I/O bursts) time
-    int inter_arrival;              //
+    int inter_arrival;              //interarrival time
 	int arrival;					//arriaval time
 	int io_burst;					//the length of time this job requires an I/O device
 	int cpu_burst[cpu_burst_max];	//the time this process requires the CPU
     int burst_num;                  //current burst
-    int burst_count;                //total number of bursts
+    int burst_count = 0;            //total number of bursts (it's 0 initially)
 
 				//create variables for the followings
 
@@ -66,7 +66,7 @@ public:
 
 };
 
-		//declare and define the long queue and its required functions
+		//declare and define the long queue type and its required functions
 class longQueue {
 private:
 	int front, rear, size;
@@ -77,6 +77,10 @@ public:
 	bool isEmpty() { if (size == 0) return true; else return false; };			//returns empty or not
 	bool isFull() { if (size == long_max) return true; else return false; };	//returns full or not
 	
+			//************************************************************
+			//   Warning! If a new job is added while queue is full,
+			//   the job will be dropped without any recovery option!
+			//************************************************************
 	bool add(job * );					//adds the given job
 	job * getNext();					//get the pointer of the next job in the queue
 
@@ -86,7 +90,7 @@ public:
 	bool incrementAll();				//increment all the jobs inside the queue
 };
 
-		//declare and define short queue and its required functions
+		//declare and define short queue type and its required functions
 class shortQueue {
 private:
 	int front, rear, size;
@@ -96,7 +100,11 @@ public:
 	shortQueue() { front = -1; rear = -1; size = 0; };							//constructs the object
 	bool isEmpty() { if (size == 0) return true; else return false; };			//returns empty or not
 	bool isFull() { if (size == short_max) return true; else return false; };	//returns full or not
-
+	
+			//************************************************************
+			//   Warning! If a new job is added while queue is full,
+			//   the job will be dropped without any recovery option!
+			//************************************************************
 	bool add(job * );					//adds the given job
 	job * getNext();					//get the pointer of the next job in the queue
 
@@ -106,7 +114,7 @@ public:
 	bool incrementAll();				//increment all the jobs inside the queue
 };
 
-		//declare and define the required functions for I/O queue
+		//declare and define the required functions for I/O queue type
 class ioQueue {
 private:
 	int front, rear, size;
@@ -116,7 +124,11 @@ public:
 	ioQueue() { front = -1; rear = -1; size = 0; };								//constructs the object
 	bool isEmpty() { if (size == 0) return true; else return false; };			//returns empty or not
 	bool isFull() { if (size == io_max) return true; else return false; };		//returns full or not
-
+	
+			//************************************************************
+			//   Warning! If a new job is added while queue is full,
+			//   the job will be dropped without any recovery option!
+			//************************************************************
 	bool add(job *);					//adds the given job
 	job * getNext();					//get the pointer of the next job in the queue
 
@@ -140,16 +152,13 @@ static int IOQ_time = 0;					//total I/O Queue wait time for all jobs
 
 static job *temp = NULL;					//temporary space
 
-int total_jobs_run = 0;
-int total_response_time = 0;
-int total_productive_time = 0;
-int total_turnaround_time = 0;
-int total_stq_wait = 0;
-int total_ltq_wait = 0;
-int total_ioq_wait = 0;
-
-						//*** more variables are to be added as needed ***//
-
+static int total_jobs_run = 0;
+static int total_response_time = 0;
+static int total_productive_time = 0;
+static int total_turnaround_time = 0;
+static int total_stq_wait = 0;
+static int total_ltq_wait = 0;
+static int total_ioq_wait = 0;
 
 struct IOdevice {
     bool    available;                  // Signals that the IO device is available
@@ -169,7 +178,7 @@ struct CPU {
     bool    processing_stopped;         // Signals to stop CPU job processing
     bool    suspended;                  // Signals context switch to handle interrupt
     int     suspend_timer;              // Keeps track of current interrupt time
-    int     total_wait;                       // Total time spent waiting (in suspension)
+    int     total_wait;					// Total time spent waiting (in suspension)
     job*    susp_process;               // Pointer to suspended process
     job*    process;                    // Pointer to which job has the CPU
 };

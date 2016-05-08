@@ -3,10 +3,12 @@
 *	Primary Author			:	Hein Htet Zaw
 *	Contributing Author(s)	:
 *	Date Created			:	29 April 2016
-*	Date Last Modified		:	29 April 2016
+*	Date Last Modified		:	7 May 2016
 *
 *	Description		:	This file contains the main function of the program and some small functions
 *                       required by the main function.
+*
+*				**This file is mainly for testing for the binary tree and the three queues**
 *
 */
 
@@ -23,7 +25,6 @@ bool traverseTree(tree *, job *);
 
 int main() {
 	ifstream infile("SIM_DATA.txt", ios::in);
-//	ofstream outfile("sample_output.txt", ios::out);
 			
 			//create a storage
 	tree storage;
@@ -43,14 +44,13 @@ int main() {
 		infile >> theJob->arrival;				//read job arrival time
 		infile >> theJob->io_burst;				//read job's I/O burst length
 		infile >> temp_cpu_burst;				//read job's first cpu burst
-
 				//read the length cpu bursts
 		while (temp_cpu_burst != 0 && read == true) {
 
 					//store the current cpu burst
 			theJob->cpu_burst[theJob->burst_count] = temp_cpu_burst;
 			infile >> temp_cpu_burst;			//read job's next cpu burst
-
+			
 					//detect sentinel and stop reading 
 			if (temp_cpu_burst == -1) read = false;
 
@@ -59,20 +59,158 @@ int main() {
 		}
 
 		//******* these are the tests to check if data is read correctly *******//
-		print(theJob);	//print current job
-		if (storage.add(theJob)) cout << "Input Success!" << endl << endl;	//print message
+		//print(theJob);	//print current job
+		if (storage.add(theJob));// cout << "Input Success!" << endl << endl;	//print message
 		else cout << "Input Failed!" << endl << endl;
 		//**********************************************************************//
 
 	}
 
-	//******* these are the tests to check if data is read correctly *******//
+	//******* these are the tests to check if data is read correctly *******
 	cout << endl << "Total Job Count: " << storage.getJobCount() << endl;
 	cout << "Job 100: "; print(storage.getJob(100)); cout << endl;
 	cout << "Read Finish!" << endl;
 	cout << endl << "The Storage Tree: " << endl;
 	traverseTree(&storage, storage.getRoot());
-	//**********************************************************************//
+	//**********************************************************************/
+
+	//******* these are the tests to check if long term queue is working correctly *******
+	longQueue *Qlong = new longQueue();
+	for (int i = 1;!Qlong->isFull(); i++) {
+		Qlong->add(storage.getJob(i));
+		cout << "Added at Slot " << Qlong->getRear() << endl;
+	}
+	//cout << "------------------------------------------" << endl;
+	for (int i = 1; i <= 10; i++) {
+		job *temp = new job();
+		temp = Qlong->getNext();
+		cout << temp->time_in_cpu << " " << temp->time_in_longQ << " "
+			<< temp->time_in_shortQ << " " << temp->time_in_ioQ << " " << temp->num << endl;
+	}
+	if (Qlong->incrementAll()) cout << "Incrementing Success!" << endl;
+	for (int i = 1; i <= 10; i++) {
+		job *temp = new job();
+		temp = Qlong->getNext();
+		cout << temp->time_in_cpu << " " << temp->time_in_longQ << " "
+			<< temp->time_in_shortQ << " " << temp->time_in_ioQ << " " << temp->num << endl;
+	}
+	for (int i = 61; i <= 70; i++) {
+		Qlong->add(storage.getJob(i));
+		cout << "Added at Slot " << Qlong->getRear() << endl;
+	}
+	if (Qlong->incrementAll()) cout << "Incrementing Success!" << endl;
+	for (int i = 1; i<=10; i++) {
+		job *temp = new job();
+		temp = Qlong->getNext();
+		cout << temp->time_in_cpu << " " << temp->time_in_longQ << " "
+			<< temp->time_in_shortQ << " " << temp->time_in_ioQ << " " << temp->num << endl;
+	}
+	cout << "-----------------------------" << endl;
+	//if (Qlong->incrementAll()) cout << "Incrementing Success!" << endl;
+	for (int i = 1; i <= 10; i++) {
+		job *temp = new job();
+		temp = Qlong->getNext();
+		cout << temp->time_in_cpu << " " << temp->time_in_longQ << " "
+			<< temp->time_in_shortQ << " " << temp->time_in_ioQ << " " << temp->num << endl;
+	}
+	for (int i = 71; i <= 80; i++) {
+		Qlong->add(storage.getJob(i));
+		cout << "Added at Slot " << Qlong->getRear() << endl;
+	}
+	if (Qlong->incrementAll()) cout << "Incrementing Success!" << endl;
+	for (int i = 1; i<=10; i++) {
+		job *temp = new job();
+		temp = Qlong->getNext();
+		cout << temp->time_in_cpu << " " << temp->time_in_longQ << " "
+			<< temp->time_in_shortQ << " " << temp->time_in_ioQ << " " << temp->num << endl;
+	}
+	if (Qlong->incrementAll()) cout << "Incrementing Success!" << endl;
+	for (int i = 1; !Qlong->isEmpty(); i++) {
+		job *temp = new job();
+		temp = Qlong->getNext();
+		cout << temp->time_in_cpu << " " << temp->time_in_longQ << " "
+			<< temp->time_in_shortQ << " " << temp->time_in_ioQ << " " << temp->num << endl;
+	}
+	/*
+	for (int i = 1; i <= 20; i++) {
+		cout << "Front " << Qlong->getFront() << endl;
+		cout << "Rear " << Qlong->getRear() << endl;
+		cout << "Size " << Qlong->getSize() << endl;
+		print(Qlong->getNext());
+	}
+	cout << "------------------------------------------" << endl;
+	for (int i = 61; !Qlong->isFull(); i++) {
+		Qlong->add(storage.getJob(i));
+		cout << "Front " << Qlong->getFront() << endl;
+		cout << "Rear " << Qlong->getRear() << endl;
+		cout << "Size " << Qlong->getSize() << endl;
+	}
+	cout << "------------------------------------------" << endl;
+	while (!Qlong->isEmpty()) {
+		cout << "Front " << Qlong->getFront() << endl;
+		cout << "Rear " << Qlong->getRear() << endl;
+		cout << "Size " << Qlong->getSize() << endl;
+		print (Qlong->getNext());
+	}
+	//************************************************************************************/
+
+	/******* these are the tests to check if short term queue is working correctly *******
+	shortQueue *Qshort = new shortQueue();
+	for (int i = 1;!Qshort->isFull(); i++) {
+		Qshort->add(storage.getJob(i));
+		cout << Qshort->getSize() << endl;
+	}
+	cout << "------------------------------------------" << endl;
+	for (int i = 1; i <= 20; i++) {
+		cout << "Front " << Qshort->getFront() << endl;
+		cout << "Rear " << Qshort->getRear() << endl;
+		cout << "Size " << Qshort->getSize() << endl;
+		print(Qshort->getNext());
+	}
+	cout << "------------------------------------------" << endl;
+	for (int i = 61; !Qshort->isFull(); i++) {
+		Qshort->add(storage.getJob(i));
+		cout << "Front " << Qshort->getFront() << endl;
+		cout << "Rear " << Qshort->getRear() << endl;
+		cout << "Size " << Qshort->getSize() << endl;
+	}
+	cout << "------------------------------------------" << endl;
+	while (!Qshort->isEmpty()) {
+		cout << "Front " << Qshort->getFront() << endl;
+		cout << "Rear " << Qshort->getRear() << endl;
+		cout << "Size " << Qshort->getSize() << endl;
+		print(Qshort->getNext());
+	}
+	//************************************************************************************/
+
+	/******* these are the tests to check if I/0 queue is working correctly *******
+	ioQueue *Qio = new ioQueue();
+	for (int i = 1;!Qio->isFull(); i++) {
+		Qio->add(storage.getJob(i));
+		cout << Qio->getSize() << endl;
+	}
+	cout << "------------------------------------------" << endl;
+	for (int i = 1; i <= 20; i++) {
+		cout << "Front " << Qio->getFront() << endl;
+		cout << "Rear " << Qio->getRear() << endl;
+		cout << "Size " << Qio->getSize() << endl;
+		print(Qio->getNext());
+	}
+	cout << "------------------------------------------" << endl;
+	for (int i = 61; !Qio->isFull(); i++) {
+		Qio->add(storage.getJob(i));
+		cout << "Front " << Qio->getFront() << endl;
+		cout << "Rear " << Qio->getRear() << endl;
+		cout << "Size " << Qio->getSize() << endl;
+	}
+	cout << "------------------------------------------" << endl;
+	while (!Qio->isEmpty()) {
+		cout << "Front " << Qio->getFront() << endl;
+		cout << "Rear " << Qio->getRear() << endl;
+		cout << "Size " << Qio->getSize() << endl;
+		print(Qio->getNext());
+	}
+	//************************************************************************************/
 
 	cin.get();
 	return 0;

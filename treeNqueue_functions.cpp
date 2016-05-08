@@ -3,7 +3,7 @@
 *	Primary Author			:	Hein Htet Zaw
 *	Contributing Author(s)	:
 *	Date Created			:	28 April 2016
-*	Date Last Modified		:	3 May 2016
+*	Date Last Modified		:	7 May 2016
 *
 *	Description		:	This file defines all the functions needed for the storage tree and queues
 *                       required to make this project work.
@@ -11,6 +11,7 @@
 */
 
 #include <iostream>
+#include <array>
 #include "simulation_header.h"
 
 using namespace std;
@@ -164,14 +165,16 @@ bool longQueue::add(job *theJob){
 	if (isFull()) return false;
 
 		//start filling from the front if the queue is empty
-	if (!isEmpty()) front = 0;
+	if (isEmpty()) front = 0;
 
 		//increase one space to rear and add the job
 	rear++;
-	theQ[rear] = theJob;
 
 		//loop the places when the line is filled in rear but line is not full
 	if (rear == long_max && size != long_max) rear = 0;
+
+		//add the job into the queue
+	theQ[rear] = theJob;
 
 		//keep track of number of jobs in the queue
 	size++;
@@ -181,15 +184,16 @@ bool longQueue::add(job *theJob){
 //*****************************************************************************************************
 job * longQueue::getNext(){
 
-		 // Receives – Nothing
-		 // Task - Take out the first job from the queue, and move the next job to front
-		 // Returns - The pointer of the job that leaves the queue
+		// Receives – Nothing
+		// Task - Take out the first job from the queue, and move the next job to front
+		// Returns - The pointer of the job that leaves the queue
 		
 		//return NULL if the queue is empty
 	if (isEmpty()) return false;
 
 	job *temp;
 	if (front < 0) front = 0;
+	if (front == long_max) front = 0;
 
 		//move the next job to the front of the queue
 	temp = theQ[front];
@@ -209,15 +213,16 @@ bool longQueue::incrementAll() {
 
 		//return false if the queue is empty
 	if (isEmpty()) return false;
-			
-		//if queue is not empty, increment all the processes in the queue
-	else
-		for (int i = getFront(); i <= getRear(); i++) {
-			theQ[i]->time_in_longQ++;
-		
-			if (i == long_max) i = -1;
-		}
 
+		//if queue is not empty, increment all the processes in the queue
+	else {
+		int counter = 0, temp = front;
+		while (counter != size) {
+			if (temp == long_max) temp = 0;
+			theQ[temp]->time_in_longQ++;
+			counter++; temp++;
+		}
+	}
 	return true;
 }
 
@@ -232,14 +237,16 @@ bool shortQueue::add(job *theJob){
 	if (isFull()) return false;
 
 		//start filling from the front if the queue is empty
-	if (!isEmpty()) front = 0;
+	if (isEmpty()) front = 0;
 
 		//increase one space to rear and add the job
 	rear++;
-	theQ[rear] = theJob;
 
 		//loop the places when the line is filled in rear but line is not full
 	if (rear == short_max && size != short_max) rear = 0;
+
+		//add the job into the queue
+	theQ[rear] = theJob;
 
 		//keep track of number of jobs in the queue
 	size++;
@@ -249,15 +256,16 @@ bool shortQueue::add(job *theJob){
 //*****************************************************************************************************
 job * shortQueue::getNext(){
 
-		 // Receives – Nothing
-		 // Task - Take out the first job from the queue, and move the next job to front
-		 // Returns - The pointer of the job that leaves the queue
+		// Receives – Nothing
+		// Task - Take out the first job from the queue, and move the next job to front
+		// Returns - The pointer of the job that leaves the queue
 		
 		//return NULL if the queue is empty
 	if (isEmpty()) return false;
 
 	job *temp;
 	if (front < 0) front = 0;
+	if (front == short_max) front = 0;
 
 		//move the next job to the front of the queue
 	temp = theQ[front];
@@ -271,20 +279,22 @@ job * shortQueue::getNext(){
  //*****************************************************************************************************
 bool shortQueue::incrementAll() {
 
-	// Receives – Nothing
-	// Task - Increment the time in short queue of all the processes
-	// Returns - Incremented everything or queue is empty
+		// Receives – Nothing
+		// Task - Increment the time in short queue of all the processes
+		// Returns - Incremented everything or queue is empty
 
 		//return false if the queue is empty
 	if (isEmpty()) return false;
 
 		//if queue is not empty, increment all the processes in the queue
-	else
-		for (int i = getFront(); i <= getRear(); i++) {
-			theQ[i]->time_in_shortQ++;
-
-			if (i == short_max) i = -1;
+	else {
+		int counter = 0, temp = front;
+		while (counter != size) {
+			if (temp == short_max) temp = 0;
+			theQ[temp]->time_in_shortQ++;
+			counter++; temp++;
 		}
+	}
 
 	return true;
 }
@@ -300,14 +310,16 @@ bool ioQueue::add(job *theJob){
 	if (isFull()) return false;
 
 		//start filling from the front if the queue is empty
-	if (!isEmpty()) front = 0;
+	if (isEmpty()) front = 0;
 
 		//increase one space to rear and add the job
 	rear++;
-	theQ[rear] = theJob;
 
 		//loop the places when the line is filled in rear but line is not full
 	if (rear == io_max && size != io_max) rear = 0;
+
+		//add the job in the queue
+	theQ[rear] = theJob;
 
 		//keep track of number of jobs in the queue
 	size++;
@@ -317,15 +329,16 @@ bool ioQueue::add(job *theJob){
 //*****************************************************************************************************
 job * ioQueue::getNext(){
 
-		 // Receives – Nothing
-		 // Task - Take out the first job from the queue, and move the next job to front
-		 // Returns - The pointer of the job that leaves the queue
+		// Receives – Nothing
+		// Task - Take out the first job from the queue, and move the next job to front
+		// Returns - The pointer of the job that leaves the queue
 		
 		//return NULL if the queue is empty
 	if (isEmpty()) return false;
 
 	job *temp;
 	if (front < 0) front = 0;
+	if (front == io_max) front = 0;
 
 		//move the next job to the front of the queue
 	temp = theQ[front];
@@ -339,20 +352,22 @@ job * ioQueue::getNext(){
  //*****************************************************************************************************
 bool ioQueue::incrementAll() {
 
-	// Receives – Nothing
-	// Task - Increment the time in I/O queue of all the processes
-	// Returns - Incremented everything or queue is empty
+		// Receives – Nothing
+		// Task - Increment the time in I/O queue of all the processes
+		// Returns - Incremented everything or queue is empty
 
 		//return false if the queue is empty
 	if (isEmpty()) return false;
 
 		//if queue is not empty, increment all the processes in the queue
-	else
-		for (int i = getFront(); i <= getRear(); i++) {
-			theQ[i]->time_in_ioQ++;
-
-			if (i == io_max) i = -1;
+	else {
+		int counter = 0, temp = front;
+		while (counter != size) {
+			if (temp == io_max) temp = 0;
+			theQ[temp]->time_in_ioQ++;
+			counter++; temp++;
 		}
+	}
 
 	return true;
 }

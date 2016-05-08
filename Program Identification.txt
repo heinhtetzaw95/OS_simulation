@@ -49,7 +49,7 @@
 //*                TYPE OF SCHEDULING ALGORITHM(S) USED AND ON WHICH DEVICES (CPU, I/O, AND QUEUES)   *
 //*                ANY OTHER INFORMATION THE TEAM MAY DEEM APPROPIATE                                 *
 //*                IF THE PROGRAM EMPLYS A SECOND ALGORITHM, AN OUTLINE OF THE ALGORITHM (PSEUDOCODE) *
-//*				          USED IN THE SIMULATION TO MANAGE THE SHORT TERM QUEUE                       *
+//*                       USED IN THE SIMULATION TO MANAGE THE SHORT TERM QUEUE                       *
 //*                A MINIMUM OF (3) WAYS IN WHICH THE SIMULATION CAN BE ENHANCED (MAKE MORE REALISTIC)*
 //*                                                                                                   *
 //*****************************************************************************************************
