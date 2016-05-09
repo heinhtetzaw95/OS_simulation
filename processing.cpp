@@ -33,6 +33,8 @@ void manage_ltq(longQueue& longterm_queue, job* new_job, FlagContainer& flags) {
     if (!longterm_queue.isEmpty()) {
         // Increment wait time for all processes in queue
         longterm_queue.incrementAll();
+        
+        //* Track time in longterm queue?
     }
     // Handle incoming job if the longtern queue is not full
     if (flags.incoming_job && !longterm_queue.isFull()) {
@@ -57,6 +59,8 @@ void manage_stq(shortQueue& shortterm_queue, longQueue& longterm_queue, IOdevice
     if (!shortterm_queue.isEmpty()) {
         // Increment wait time for all processes in queue
         shortterm_queue.incrementAll();
+        
+        //* Track time in shortterm queue?
     }
     
     // Handle any job that has just finished with the I/O device
@@ -99,7 +103,7 @@ void manage_stq(shortQueue& shortterm_queue, longQueue& longterm_queue, IOdevice
     // Check for processes in longterm queue
     if (!shortterm_queue.isFull() && !longterm_queue.isEmpty() ) {
         // Move process from longterm queue to shortterm queue
-        shortterm_queue.add(longterm_queue.getNext());                                  // !! Confirm we want to use "Next"
+        shortterm_queue.add(longterm_queue.getNext());
     }
     
     return;
@@ -115,6 +119,9 @@ void manage_stq(shortQueue& shortterm_queue, longQueue& longterm_queue, IOdevice
 void manage_cpu(CPU* cpu, shortQueue& shortterm_queue, FlagContainer& flags) {
     // Handle if a process is suspended
     if (cpu->suspended) {
+        
+        //* Track wait time?
+        
         // Decrement suspend timer
         cpu->suspend_timer--;
         // Check if interrupt is complete
@@ -155,8 +162,13 @@ void manage_cpu(CPU* cpu, shortQueue& shortterm_queue, FlagContainer& flags) {
             if (cpu->process != nullptr) {
                 // Update timer of current CPU burst
                 cpu->process->cpu_burst[cpu->process->burst_num]--;
-                // Check completion
-                if (cpu->process->time_in_cpu == cpu->process->cpu_burst[cpu->process->burst_num]) { // !!
+                
+                //* Track process time in CPU
+                
+                cpu->process->time_in_cpu++;
+                
+                // Check for completion of burst
+                if (cpu->timer == cpu->process->cpu_burst[cpu->process->burst_num]) {
                     // Flag completion
                     cpu->complete = true;
                     // Increment burst
@@ -169,8 +181,8 @@ void manage_cpu(CPU* cpu, shortQueue& shortterm_queue, FlagContainer& flags) {
             else {
                 // Unsuspend any process that's suspended
                 if (cpu->suspended) {
-                    // Give entering process the CPU
-                    cpu->process = entering_process;
+                    // Give suspended process back to the CPU
+                    cpu->process = cpu->susp_process;
                     // Increment cpu wait counter
                     cpu->total_wait++;                                                           // !! Again?!
                     // Process is no longer suspended
@@ -207,6 +219,8 @@ void manage_ioq(ioQueue& io_queue, CPU* cpu) {
     if (!io_queue.isEmpty()) {
         // Increment wait times
         io_queue.incrementAll();
+        
+        //* Track time in IO queue?
     }
     
     // Handle any process that the CPU just finished processing

@@ -192,7 +192,7 @@ struct FlagContainer {
 void manage_ltq(longQueue&, job*, FlagContainer&);
 void manage_stq(shortQueue&, longQueue&, IOdevice*, FlagContainer&);
 void manage_ioq(ioQueue&, CPU*);
-void manage_cpu(CPU*, job*, shortQueue&, FlagContainer&);
-void manage_iodevice(IOdevice*, ioQueue&, job*, FlagContainer&);
+void manage_cpu(CPU*, shortQueue&, FlagContainer&);
+void manage_iodevice(IOdevice*, ioQueue&, FlagContainer&);
 
 #endif // !_SIMULATION_HEADER_H_

@@ -189,7 +189,7 @@ job * longQueue::getNext(){
 		// Returns - The pointer of the job that leaves the queue
 		
 		//return NULL if the queue is empty
-	if (isEmpty()) return false;
+	//if (isEmpty()) return false;
 
 	job *temp;
 	if (front < 0) front = 0;
@@ -261,7 +261,7 @@ job * shortQueue::getNext(){
 		// Returns - The pointer of the job that leaves the queue
 		
 		//return NULL if the queue is empty
-	if (isEmpty()) return false;
+	//if (isEmpty()) return false;
 
 	job *temp;
 	if (front < 0) front = 0;
@@ -334,7 +334,7 @@ job * ioQueue::getNext(){
 		// Returns - The pointer of the job that leaves the queue
 		
 		//return NULL if the queue is empty
-	if (isEmpty()) return false;
+	//if (isEmpty()) return false;
 
 	job *temp;
 	if (front < 0) front = 0;

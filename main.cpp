@@ -23,7 +23,7 @@ using namespace std;
 void print(job *);
 bool traverseTree(tree *, job *);
 
-int main() {
+int main_() {
 	ifstream infile("SIM_DATA.txt", ios::in);
 			
 			//create a storage

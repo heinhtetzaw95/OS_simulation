@@ -49,7 +49,7 @@ int main() {
     job job_list[150];
 
          // initialize our
-    ifstream infile("data.txt", ios::in);
+    ifstream infile("SIM_DATA.txt", ios::in);
 
          //initialize our reading flag and job count
     bool reading = true;
@@ -137,9 +137,9 @@ int main() {
     while(total_jobs_run <= job_count) {
         manage_ltq(longterm_queue, current_job, flags);
         manage_stq(shortterm_queue, longterm_queue, &io_device, flags);
-        manage_cpu(&cpu, current_job, shortterm_queue, flags);
+        manage_cpu(&cpu, shortterm_queue, flags);
         manage_ioq(io_queue, &cpu);
-        manage_iodevice(&io_device, io_queue, current_job, flags);
+        manage_iodevice(&io_device, io_queue, flags);
         
             // Increment clock
         clock++;
