@@ -31,9 +31,9 @@ int main() {
     total_stq_wait = 0;
     total_ltq_wait = 0;
     total_ioq_wait = 0;
+    sys_clock = 0;
     
     int jobs_admitted = 0;
-    sys_clock = 0;
     
         // Simulation devices
     longQueue longterm_queue;
@@ -74,7 +74,7 @@ int main() {
          //initialize our reading flag and job count
     bool reading = true;
     int job_count = 0;
-
+    int jobs_entering_system=0;
     //////////////////
     /// STEP 2 //////////////////////////////////////////////////////////////////
     //////////////////
@@ -142,9 +142,11 @@ int main() {
         current_job->arrival = sys_clock;
             // reset job_timer to zero
         job_timer = 0;
-            // Increment admitted job count
+        
         jobs_admitted++;
+        
             // increment more_jobs
+        jobs_entering_system++;
         flags.jobs_in_system++;
         
         
@@ -175,33 +177,20 @@ int main() {
                 // Set job flag to true
             flags.incoming_job = true;
                 // Get reference to job
-            current_job = &job_list[total_jobs_run];
+            current_job = &job_list[jobs_entering_system];
                 // record time of arrival
             current_job->arrival = sys_clock;
                 // reset job_timer to zero
             job_timer = 0;
-                // Increment admitted job count
+                //increment admitted job count
             jobs_admitted++;
                 // increment more_jobs
+            jobs_entering_system++;
             flags.jobs_in_system++;
         }
         
         // Update job timer
         job_timer++;
-        
-        cout << "CPU: ";
-        if (cpu.process != nullptr) {
-            cout << cpu.process->num;
-        } else {cout << "N";}
-        cout << "\tSUSP: ";
-        if (cpu.susp_process != nullptr) {
-            cout << cpu.susp_process->num;
-        } else {cout << "N";}
-        cout << "\tIO: ";
-        if (io_device.process != nullptr) {
-            cout << io_device.process->num;
-        } else {cout << "N";}
-        cout << "\t" << "\n\n";
         
     }
     

@@ -81,6 +81,7 @@ void manage_stq(shortQueue& shortterm_queue, longQueue& longterm_queue, IOdevice
             
                 // increment count
             total_jobs_run++;
+           
             
             io_device->process->time_in_system = sys_clock - io_device->process->arrival;
             io_device->process->turnaround = io_device->process->time_in_system;
@@ -93,22 +94,24 @@ void manage_stq(shortQueue& shortterm_queue, longQueue& longterm_queue, IOdevice
         }
         // If not finished, place back on shorttterm queue
         else {
-            // Check for room in shortterm queue
-            if (!shortterm_queue.isFull()) {
+            // Check for room in shortterm queue   //CHANGE HERE
+            //if (!shortterm_queue.isFull()) {
                 // Place the process in the shortterm queue
                 shortterm_queue.add(io_device->process);
                 // Reset IO device
                 io_device->process = nullptr;
-            }
-            else {
+            
+           // }
+           // else {
                 // Error
-            }
+         //   }
         }
     } // End handling job finished with IO
     
     // Check for processes in longterm queue
-    if (!shortterm_queue.isFull() && !longterm_queue.isEmpty() ) {
+    if (!shortterm_queue.isNearlyFull() && !longterm_queue.isEmpty() && !shortterm_queue.isFull()) {
         // Move process from longterm queue to shortterm queue
+                  //TEST
         shortterm_queue.add(longterm_queue.getNext());
     }
     
@@ -134,6 +137,9 @@ void manage_cpu(CPU* cpu, shortQueue& shortterm_queue, FlagContainer& flags) {
         if (cpu->suspend_timer == 0) {
             flags.interrupt = false;
             cpu->suspended = false;
+            cpu->process=cpu->susp_process;
+            cpu->susp_process=NULL;
+            cpu->processing_stopped=false;
         }
         // Otherwise, check if process is in CPU when
         //  interrupt occured
@@ -168,7 +174,6 @@ void manage_cpu(CPU* cpu, shortQueue& shortterm_queue, FlagContainer& flags) {
             if (cpu->process != nullptr) {
                 // Update timer of current CPU burst
                 cpu->process->cpu_burst[cpu->process->burst_num]--;
-                
                 //* Track process time in CPU
                 
                 cpu->process->time_in_cpu++;
@@ -209,7 +214,7 @@ void manage_cpu(CPU* cpu, shortQueue& shortterm_queue, FlagContainer& flags) {
     } // End handling if processing has not halted
     
     // Remove CPU stop flag
-    cpu->processing_stopped = false;
+    //cpu->processing_stopped = false;
     
     return;
 }
@@ -234,6 +239,7 @@ void manage_ioq(ioQueue& io_queue, CPU* cpu) {
     if (cpu->complete && !io_queue.isFull()) {
         // Move process from CPU to IO queue
         io_queue.add(cpu->process);
+        
         // Reset CPU process num
         cpu->process = nullptr;
         // Indicate CPU is ready for more processes
@@ -254,17 +260,20 @@ void manage_ioq(ioQueue& io_queue, CPU* cpu) {
  */
 void manage_iodevice(IOdevice* io_device, ioQueue& io_queue, FlagContainer& flags) {
     // Handle if no current interrupt
-    if (!flags.interrupt) {
+    //if (!flags.interrupt) {
         // Handle if process is in IO device
         if (io_device->process != nullptr) {
             // Update IO timer
             io_device->timer++;
             // If finished burst
             if (io_device->timer == io_device->burst_length) {
+                
+                if(io_device->process->num == 4)
+                cout << io_device->process->num << " " << io_device->timer << " " << io_device->burst_length <<  " " << io_device->process->cpu_burst[io_device->process->burst_num] << endl;
                 // Indicate IO complete
                 io_device->complete = true;
                 // Interrupt if more CPU bursts to process
-                if (io_device->process->cpu_burst[io_device->process->burst_num+1] > 0)
+                if (io_device->process->cpu_burst[io_device->process->burst_num] > 0)
                 {
                     // Indicate interrupt
                     flags.interrupt = true;
@@ -272,6 +281,8 @@ void manage_iodevice(IOdevice* io_device, ioQueue& io_queue, FlagContainer& flag
                 // Finish up if all bursts are processed
                 else {
                     io_device->job_finished = true;
+                    //cout << io_device->process->num << endl;
+                    
                 }
             } // End handling finished burst
         } // End handling process in device
@@ -290,7 +301,7 @@ void manage_iodevice(IOdevice* io_device, ioQueue& io_queue, FlagContainer& flag
                 io_device->available = false;
             }
         } // End handling IO queue
-    }
+    //}
     
     return;
 }

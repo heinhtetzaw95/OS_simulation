@@ -201,7 +201,8 @@ job * longQueue::getNext(){
 		theQ[i] = theQ[i + 1];
 		theQ[i + 1] = NULL;
 	}
-	if (size == 1) theQ[0] = NULL;
+    if (size == 1)
+        theQ[0] = NULL;
 	rear--;
 		
 		//keep track of the number of jobs in the queue
@@ -278,7 +279,8 @@ job * shortQueue::getNext(){
 		theQ[i] = theQ[i + 1];
 		theQ[i + 1] = NULL;
 	}
-	if (size == 1) theQ[0] = NULL;
+    if (size == 1)
+        theQ[0] = NULL;
 	rear--;
 		
 		//keep track of the number of jobs in the queue
@@ -356,7 +358,8 @@ job * ioQueue::getNext(){
 		theQ[i] = theQ[i + 1];
 		theQ[i + 1] = NULL;
 	}
-	if (size == 1) theQ[0] = NULL;
+    if (size == 1)
+        theQ[0] = NULL;
 	rear--;
 		
 		//keep track of the number of jobs in the queue

@@ -102,6 +102,7 @@ private:
 public:
 	shortQueue() { front = -1; rear = -1; size = 0; };							//constructs the object
 	bool isEmpty() { if (size == 0) return true; else return false; };			//returns empty or not
+    bool isNearlyFull() { if (size == short_max-1) return true; else return false; };
 	bool isFull() { if (size == short_max) return true; else return false; };	//returns full or not
 	
 			//************************************************************
