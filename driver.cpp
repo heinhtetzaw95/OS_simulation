@@ -31,6 +31,8 @@ int main() {
     total_stq_wait = 0;
     total_ltq_wait = 0;
     total_ioq_wait = 0;
+    
+    int jobs_admitted = 0;
     sys_clock = 0;
     
         // Simulation devices
@@ -131,7 +133,7 @@ int main() {
 
     /// 3.2 //////////////////////////////////////////////////////////////////
         // When a job enters the system
-    if (job_list[total_jobs_run].inter_arrival == job_timer) {
+    if (job_list[jobs_admitted].inter_arrival == job_timer) {
             // Set job flag to true
         flags.incoming_job = true;
             // Get reference to job
@@ -140,7 +142,8 @@ int main() {
         current_job->arrival = sys_clock;
             // reset job_timer to zero
         job_timer = 0;
-        
+            // Increment admitted job count
+        jobs_admitted++;
             // increment more_jobs
         flags.jobs_in_system++;
         
@@ -168,7 +171,7 @@ int main() {
         // GOTO 3.1 LOL
         
             // When a job enters the system
-        if (job_list[total_jobs_run].inter_arrival == job_timer) {
+        if (job_list[jobs_admitted].inter_arrival == job_timer) {
                 // Set job flag to true
             flags.incoming_job = true;
                 // Get reference to job
@@ -177,12 +180,28 @@ int main() {
             current_job->arrival = sys_clock;
                 // reset job_timer to zero
             job_timer = 0;
+                // Increment admitted job count
+            jobs_admitted++;
                 // increment more_jobs
             flags.jobs_in_system++;
         }
         
         // Update job timer
         job_timer++;
+        
+        cout << "CPU: ";
+        if (cpu.process != nullptr) {
+            cout << cpu.process->num;
+        } else {cout << "N";}
+        cout << "\tSUSP: ";
+        if (cpu.susp_process != nullptr) {
+            cout << cpu.susp_process->num;
+        } else {cout << "N";}
+        cout << "\tIO: ";
+        if (io_device.process != nullptr) {
+            cout << io_device.process->num;
+        } else {cout << "N";}
+        cout << "\t" << "\n\n";
         
     }
     

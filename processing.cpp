@@ -174,7 +174,7 @@ void manage_cpu(CPU* cpu, shortQueue& shortterm_queue, FlagContainer& flags) {
                 cpu->process->time_in_cpu++;
                 
                 // Check for completion of burst
-                if (cpu->timer == cpu->process->cpu_burst[cpu->process->burst_num]) {
+                if (cpu->process->cpu_burst[cpu->process->burst_num] == 0) {
                     // Flag completion
                     cpu->complete = true;
                     // Increment burst
@@ -189,6 +189,7 @@ void manage_cpu(CPU* cpu, shortQueue& shortterm_queue, FlagContainer& flags) {
                 if (cpu->suspended) {
                     // Give suspended process back to the CPU
                     cpu->process = cpu->susp_process;
+                    cpu->susp_process = nullptr;
                     // Increment cpu wait counter
                     cpu->total_wait++;                                                           // !! Again?!
                     // Process is no longer suspended
@@ -263,7 +264,7 @@ void manage_iodevice(IOdevice* io_device, ioQueue& io_queue, FlagContainer& flag
                 // Indicate IO complete
                 io_device->complete = true;
                 // Interrupt if more CPU bursts to process
-                if (io_device->process->cpu_burst[io_device->process->burst_num+1] <= 0)
+                if (io_device->process->cpu_burst[io_device->process->burst_num+1] > 0)
                 {
                     // Indicate interrupt
                     flags.interrupt = true;
