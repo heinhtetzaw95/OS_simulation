@@ -16,7 +16,7 @@
 #include <string>
 #include <array>
 
-#define long_max 60
+#define long_max 65
 #define short_max 30
 #define io_max 30
 #define cpu_burst_max 25
@@ -35,6 +35,7 @@ struct job {
 	int cpu_burst[cpu_burst_max];	//the time this process requires the CPU
     int burst_num;                  //current burst
     int burst_count = 0;            //total number of bursts (it's 0 initially)
+    int lastEnterTime = 0;        //the time that a process last entered a device/queue
 
 				//create variables for the followings
 
@@ -88,7 +89,7 @@ public:
 	job * getNext();					//get the pointer of the next job in the queue
 
 	int getRear() { return rear; };		//returns the array number of lsatmost node
-	int getFront() { return front; };	//returns the array number of frontmost node
+	job * getFront() { return theQ[front]; };	//returns the array number of frontmost node
 	int getSize() { return size; };		//returns the current number of jobs in the queue
 	bool incrementAll();				//increment all the jobs inside the queue
 };
@@ -113,7 +114,7 @@ public:
 	job * getNext();					//get the pointer of the next job in the queue
 
 	int getRear() { return rear; };		//returns the array number of lsatmost node
-	int getFront() { return front; };	//returns the array number of frontmost node
+	job * getFront() { return theQ[front]; };	//returns the array number of frontmost node
 	int getSize() { return size; };		//returns the current number of jobs in the queue
 	bool incrementAll();				//increment all the jobs inside the queue
 };
@@ -137,7 +138,7 @@ public:
 	job * getNext();					//get the pointer of the next job in the queue
 
 	int getRear() { return rear; };		//returns the array number of lsatmost node
-	int getFront() { return front; };	//returns the array number of frontmost node
+	job * getFront() { return theQ[front]; };	//returns the array number of frontmost node
 	int getSize() { return size; };		//returns the current number of jobs in the queue
 	bool incrementAll();				//increment all the jobs inside the queue
 };
@@ -202,6 +203,7 @@ struct FlagContainer {
     int     jobs_in_system;             // Number of jobs currently in the system
     bool    incoming_job;               // Signals that a job has arrived
     bool    interrupt;                  // Signals that an interrupt is in progress
+    bool    io_interrupt;
 };
 
 void manage_ltq(longQueue&, job*, FlagContainer&);
