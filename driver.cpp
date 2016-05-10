@@ -107,7 +107,8 @@ int main() {
     // Get first job into the system
 
     /// 3.1 //////////////////////////////////////////////////////////////////
-        // Update job timer
+    
+    // Update job timer
     job_timer++;
 
     /// 3.2 //////////////////////////////////////////////////////////////////
@@ -121,20 +122,25 @@ int main() {
         current_job->arrival = clock;
             // reset job_timer to zero
         job_timer = 0;
+        
+        cout << current_job->num << " " << job_list[total_jobs_run].inter_arrival << " " << job_timer << endl;
+        
             // increment count
         total_jobs_run++;
             // increment more_jobs
         flags.jobs_in_system++;
+        
+        
     }
-
-
+    
+   
     //////////////////
     /// STEP 4 //////////////////////////////////////////////////////////////////
     //////////////////
 
     /// 4.1 //////////////////////////////////////////////////////////////////
         //while there are jobs to process
-    while(total_jobs_run <= job_count) {
+    while(total_jobs_run < job_count) {
         manage_ltq(longterm_queue, current_job, flags);
         manage_stq(shortterm_queue, longterm_queue, &io_device, flags);
         manage_cpu(&cpu, shortterm_queue, flags);
@@ -147,11 +153,8 @@ int main() {
             // Check for incoming processes
         // GOTO 3.1 LOL
         
-            // Update job timer
-        job_timer++;
-        
             // When a job enters the system
-        if (job_list[total_jobs_run].arrival == job_timer) {
+        if (job_list[total_jobs_run].inter_arrival == job_timer) {
                 // Set job flag to true
             flags.incoming_job = true;
                 // Get reference to job
@@ -165,6 +168,11 @@ int main() {
                 // increment more_jobs
             flags.jobs_in_system++;
         }
+        
+        cout << current_job->num << " " << job_list[total_jobs_run].inter_arrival << " " << job_timer << endl;
+        
+        // Update job timer
+        job_timer++;
         
     }
     
