@@ -3,7 +3,7 @@
 *	Primary Author			:	Hein Htet Zaw
 *	Contributing Author(s)	:
 *	Date Created			:	28 April 2016
-*	Date Last Modified		:	7 May 2016
+*	Date Last Modified		:	9 May 2016
 *
 *	Description		:	This file defines all the functions needed for the storage tree and queues
 *                       required to make this project work.
@@ -189,7 +189,7 @@ job * longQueue::getNext(){
 		// Returns - The pointer of the job that leaves the queue
 		
 		//return NULL if the queue is empty
-	//if (isEmpty()) return false;
+	if (isEmpty()) return NULL;
 
 	job *temp;
 	if (front < 0) front = 0;
@@ -261,7 +261,7 @@ job * shortQueue::getNext(){
 		// Returns - The pointer of the job that leaves the queue
 		
 		//return NULL if the queue is empty
-	//if (isEmpty()) return false;
+	if (isEmpty()) return NULL;
 
 	job *temp;
 	if (front < 0) front = 0;
@@ -334,7 +334,7 @@ job * ioQueue::getNext(){
 		// Returns - The pointer of the job that leaves the queue
 		
 		//return NULL if the queue is empty
-	//if (isEmpty()) return false;
+	if (isEmpty()) return NULL;
 
 	job *temp;
 	if (front < 0) front = 0;
