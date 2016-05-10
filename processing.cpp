@@ -71,13 +71,16 @@ void manage_stq(shortQueue& shortterm_queue, longQueue& longterm_queue, IOdevice
         io_device->available = true;
         // Handle if the job is finished
         if (io_device->job_finished) {
-            // Collect data
+                // Collect data
             total_response_time += io_device->process->response;
             total_productive_time += io_device->process->length;
             total_turnaround_time += io_device->process->turnaround;
             total_stq_wait += io_device->process->time_in_shortQ;
             total_ltq_wait += io_device->process->time_in_longQ;
             total_ioq_wait += io_device->process->time_in_ioQ;
+            
+                // increment count
+            total_jobs_run++;
             
             io_device->process->time_in_system = sys_clock - io_device->process->arrival;
             io_device->process->turnaround = io_device->process->time_in_system;
