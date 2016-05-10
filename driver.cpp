@@ -7,14 +7,29 @@
 
 using namespace std;
 
+double total_stq_wait;
+int total_jobs_run;
+double total_response_time;
+double total_productive_time;
+double total_turnaround_time;
+double total_ltq_wait;
+double total_ioq_wait;
+
 int main() {
     //////////////////
     /// STEP 1 ///////////////////////////////////////////////////////
     //////////////////
 
         // old vars
-    int clock = 0; // The simulator clock to keep track of the total time of the simulation run
     int job_timer = 0; // Keeps track of the time between job arrivals
+    total_stq_wait = 0;
+    total_jobs_run = 0;
+    total_response_time = 0;
+    total_productive_time = 0;
+    total_turnaround_time = 0;
+    total_stq_wait = 0;
+    total_ltq_wait = 0;
+    total_ioq_wait = 0;
     
         // Simulation devices
     longQueue longterm_queue;
@@ -50,6 +65,7 @@ int main() {
 
          // initialize our
     ifstream infile("SIM_DATA.txt", ios::in);
+    ofstream outfile("Output.txt", ios::out);
 
          //initialize our reading flag and job count
     bool reading = true;
@@ -119,11 +135,9 @@ int main() {
             // Get reference to job
         current_job = &job_list[total_jobs_run];
             // record time of arrival
-        current_job->arrival = clock;
+        current_job->arrival = sys_clock;
             // reset job_timer to zero
         job_timer = 0;
-        
-        cout << current_job->num << " " << job_list[total_jobs_run].inter_arrival << " " << job_timer << endl;
         
             // increment count
         total_jobs_run++;
@@ -148,7 +162,7 @@ int main() {
         manage_iodevice(&io_device, io_queue, flags);
         
             // Increment clock
-        clock++;
+        sys_clock++;
         
             // Check for incoming processes
         // GOTO 3.1 LOL
@@ -160,7 +174,7 @@ int main() {
                 // Get reference to job
             current_job = &job_list[total_jobs_run];
                 // record time of arrival
-            current_job->arrival = clock;
+            current_job->arrival = sys_clock;
                 // reset job_timer to zero
             job_timer = 0;
                 // increment count
@@ -169,14 +183,28 @@ int main() {
             flags.jobs_in_system++;
         }
         
-        cout << current_job->num << " " << job_list[total_jobs_run].inter_arrival << " " << job_timer << endl;
-        
         // Update job timer
         job_timer++;
         
     }
     
         // Process accumulated data
+    double avgLTQ = avg_ltq(total_jobs_run, total_ltq_wait);
+    double avgSTQ = avg_stq(total_jobs_run, total_stq_wait);
+    double avgIOQ = avg_ioq(total_jobs_run, total_ioq_wait);
+    double avgResponse = avg_response_time(total_jobs_run, total_response_time);
+    double avgTurnaround = avg_turnaround_time(total_jobs_run, total_turnaround_time);
+    double total_time = 0;
+    double cpuUtilization = 0;
+    double contextSwitchTime = 0;
+    double systemThroughput = 0;
+    //double cpuUtilization = cpu_utilization(total_productive_time, total_time);
+    
+    print_header(outfile);
+    print_output("First in First Out", total_time, contextSwitchTime,
+                 cpuUtilization, avgResponse, avgTurnaround, systemThroughput, avgLTQ, avgSTQ, avgIOQ, outfile);
+    
+    
     
     return 0;
 }

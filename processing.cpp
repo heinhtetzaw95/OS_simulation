@@ -71,12 +71,6 @@ void manage_stq(shortQueue& shortterm_queue, longQueue& longterm_queue, IOdevice
         io_device->available = true;
         // Handle if the job is finished
         if (io_device->job_finished) {
-            // Remove job from the system
-            flags.jobs_in_system--;
-            io_device->process = NULL;
-            // Remove job finished flag
-            io_device->job_finished = false;
-            
             // Collect data
             total_response_time += io_device->process->response;
             total_productive_time += io_device->process->length;
@@ -84,6 +78,15 @@ void manage_stq(shortQueue& shortterm_queue, longQueue& longterm_queue, IOdevice
             total_stq_wait += io_device->process->time_in_shortQ;
             total_ltq_wait += io_device->process->time_in_longQ;
             total_ioq_wait += io_device->process->time_in_ioQ;
+            
+            io_device->process->time_in_system = sys_clock - io_device->process->arrival;
+            io_device->process->turnaround = io_device->process->time_in_system;
+            
+            // Remove job from the system
+            flags.jobs_in_system--;
+            io_device->process = NULL;
+            // Remove job finished flag
+            io_device->job_finished = false;
         }
         // If not finished, place back on shorttterm queue
         else {
@@ -256,8 +259,6 @@ void manage_iodevice(IOdevice* io_device, ioQueue& io_queue, FlagContainer& flag
             if (io_device->timer == io_device->burst_length) {
                 // Indicate IO complete
                 io_device->complete = true;
-                // Reset IO device
-                io_device->process = nullptr;
                 // Interrupt if more CPU bursts to process
                 if (io_device->process->cpu_burst[io_device->process->burst_num+1] <= 0)
                 {
@@ -278,6 +279,7 @@ void manage_iodevice(IOdevice* io_device, ioQueue& io_queue, FlagContainer& flag
             if (!io_queue.isEmpty() && io_device->available) {
                 // Give IO device to process
                 io_device->process = io_queue.getNext();
+                io_device->burst_length = io_device->process->io_burst;
                 // Reset IO timer
                 io_device->timer = 0;
                 // Indicate IO device is busy

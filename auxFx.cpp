@@ -17,17 +17,6 @@
 #include "simulation_header.h"
 using namespace std;
 
-    // function declarations for auxillary functions
-double avg_ltq(int, int);
-double avg_stq(int,int);
-double avg_ioq(int,int);
-double avg_response_time(int,int);
-double avg_turnaround_time(int, int);
-double cpu_utilization(int,int);
-void print_output(string, int, int, int, int, int, int, int, int, int, ofstream&);
-void print_header(ofstream&);
-void print_footer(ofstream&);
-
 
 /* AVG_LTQ
  * Author: Francesco Polizzi
@@ -35,9 +24,9 @@ void print_footer(ofstream&);
  * Last revised: May 3, 2015
  * Description: Calculating the the LTQ avg wait time
  */
-double avg_ltq(int total_jobs, int total_in_ltq) {
+double avg_ltq(int total_jobs, double ltq_wait) {
         // calculate average
-    double average = total_in_ltq/total_jobs;
+    double average = ltq_wait/total_jobs;
     
         // return average
     return average;
@@ -49,9 +38,11 @@ double avg_ltq(int total_jobs, int total_in_ltq) {
  * Last revised: May 3, 2015
  * Description: Calculating the the STQ avg wait time
  */
-double 	avg_stq(int total_jobs, int total_in_stq){
+double 	avg_stq(int total_jobs, double stq_wait){
         // calculate average
-    double average = total_in_stq/total_jobs;
+    double average = stq_wait/total_jobs;
+    
+    cout << total_stq_wait << " " << total_jobs << endl;
     
         // return average
     return average;
@@ -63,9 +54,9 @@ double 	avg_stq(int total_jobs, int total_in_stq){
  * Last revised: May 3, 2015
  * Description: Calculating the the IOQ avg wait time
  */
-double	avg_ioq(int total_jobs, int total_in_ioq){
+double	avg_ioq(int total_jobs, double ioq_wait){
         // calculate average
-    double average = total_in_ioq/total_jobs;
+    double average = ioq_wait/total_jobs;
     
         // return average
     return average;
@@ -77,9 +68,9 @@ double	avg_ioq(int total_jobs, int total_in_ioq){
  * Last revised: May 3, 2015
  * Description: Calculating the average response time on all jobs
  */
-double 	avg_response_time(int total_jobs, int total_response_time){
+double 	avg_response_time(int total_jobs, double response_time){
         // calculate average
-    double average = total_response_time/total_jobs;
+    double average = response_time/total_jobs;
     
         // return average
     return average;
@@ -91,9 +82,9 @@ double 	avg_response_time(int total_jobs, int total_response_time){
  * Last revised: May 3, 2015
  * Description: Calculating the average turnaround time on all jobs
  */
-double 	avg_turnaround_time(int total_jobs, int total_turnaround_time){
+double 	avg_turnaround_time(int total_jobs, double turnaround_time){
         // calculate average
-    double average = total_turnaround_time/total_jobs;
+    double average = turnaround_time/total_jobs;
     
         // return average
     return average;
@@ -105,7 +96,7 @@ double 	avg_turnaround_time(int total_jobs, int total_turnaround_time){
  * Last revised: May 3, 2015
  * Description: Calculating the CPU Utilization for jobs
  */
-double cpu_utilization(int productive_time, int total_time){
+double cpu_utilization(int productive_time, double total_time){
         // calculate CPU utilization
     double cpuUtilization = productive_time/total_time;
     
@@ -121,7 +112,7 @@ double cpu_utilization(int productive_time, int total_time){
  */
 void print_output(string algorithmUsed, int timeToComplete, int contextSwitchTime,
                   int cpuUtilization, int avgResponse, int avgTurnaround, int systemThroughput,
-                  int avgLTQ, int avgSTQ, int avgIOQ, ofstream& Outfile){
+                  double avgLTQ, double avgSTQ, double avgIOQ, ofstream& Outfile){
         // print our output
     Outfile << "Developed using " << algorithmUsed << " algorithm." << endl;
     Outfile << "Total Simulation Time: " << timeToComplete << endl;

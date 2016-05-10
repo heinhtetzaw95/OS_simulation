@@ -21,6 +21,8 @@
 #define io_max 30
 #define cpu_burst_max 25
 
+using namespace std;
+
 		//set up a structure for jobs
 struct job {
 
@@ -40,6 +42,7 @@ struct job {
 	int time_in_longQ = 0;		//total time spent in the Long Term Queue
 	int time_in_shortQ = 0;		//total time spent in the Short Term Queue
 	int time_in_ioQ = 0;		//total time spent in the I/O Queue
+    int time_in_system = 0;
 	int turnaround = 0;			//the turnaround time
 	int response = 0;			//the response time
 	int switching = 0;			//time spent in context switching
@@ -138,6 +141,17 @@ public:
 	bool incrementAll();				//increment all the jobs inside the queue
 };
 
+// function declarations for auxillary functions
+double avg_ltq(int, double);
+double avg_stq(int, double);
+double avg_ioq(int, double);
+double avg_response_time(int, double);
+double avg_turnaround_time(int, double);
+double cpu_utilization(int,double);
+void print_output(string, int, int, int, int, int, int, double, double, double, ofstream&);
+void print_header(std::ofstream&);
+void print_footer(std::ofstream&);
+
 			//declare and instantiate global variables and arrays
 			//create spaces for the followings
 
@@ -145,20 +159,20 @@ static job *processor = NULL;				//the (only) processor
 static job *IO = NULL;						//the I/O device
 
 			//declare variables for the followings
-static int myClock = 0;						//clock to keep track of time
+static int sys_clock = 0;						//clock to keep track of time
 static int LTQ_time = 0;					//total long term queue wait time for all jobs
 static int STQ_time = 0;					//total short term queue wait time for all jobs
 static int IOQ_time = 0;					//total I/O Queue wait time for all jobs
 
 static job *temp = NULL;					//temporary space
 
-static int total_jobs_run = 0;
-static int total_response_time = 0;
-static int total_productive_time = 0;
-static int total_turnaround_time = 0;
-static int total_stq_wait = 0;
-static int total_ltq_wait = 0;
-static int total_ioq_wait = 0;
+extern int total_jobs_run;
+extern double total_response_time;
+extern double total_productive_time;
+extern double total_turnaround_time;
+extern double total_stq_wait;
+extern double total_ltq_wait;
+extern double total_ioq_wait;
 
 struct IOdevice {
     bool    available;                  // Signals that the IO device is available
