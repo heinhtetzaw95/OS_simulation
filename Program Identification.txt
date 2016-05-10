@@ -39,8 +39,8 @@
 //*                         THE I/O BURST LENGTHS                                                     *
 //*                         THE CPU BURST LENGTHS           (OF ALL JOBS)                             *
 //*                                                                                                   *
-//*                                   EXTRA CREDIT OPPORTUNITY 2                                      *
-//*                                   ==========================                                      *
+//*                                  EXTRA CREDIT OPPORTUNITY 2                                       *
+//*                                  ==========================                                       *
 //*  SUBMITTING A WRITTEN REPORT WILL BE ANOTHER 10 POINTS EXTRA CREDIT. THE REPORT SHOULD INCLUDE:   *
 //*                THE TITLE OF THE REPORT                                                            *
 //*                THE NAMES OF THE TEAM MEMBERS                                                      *

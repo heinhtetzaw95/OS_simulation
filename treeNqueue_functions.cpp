@@ -197,7 +197,11 @@ job * longQueue::getNext(){
 
 		//move the next job to the front of the queue
 	temp = theQ[front];
-	front++;
+	for (int i = 0; i < size - 1; i++) {
+		theQ[i] = theQ[i + 1];
+		theQ[i + 1] = NULL;
+	}
+	rear--;
 		
 		//keep track of the number of jobs in the queue
 	if (size > 0) size--;
@@ -269,7 +273,11 @@ job * shortQueue::getNext(){
 
 		//move the next job to the front of the queue
 	temp = theQ[front];
-	front++;
+	for (int i = 0; i < size - 1; i++) {
+		theQ[i] = theQ[i + 1];
+		theQ[i + 1] = NULL;
+	}
+	rear--;
 		
 		//keep track of the number of jobs in the queue
 	if (size > 0) size--;
@@ -342,7 +350,11 @@ job * ioQueue::getNext(){
 
 		//move the next job to the front of the queue
 	temp = theQ[front];
-	front++;
+	for (int i = 0; i < size - 1; i++) {
+		theQ[i] = theQ[i + 1];
+		theQ[i + 1] = NULL;
+	}
+	rear--;
 		
 		//keep track of the number of jobs in the queue
 	if (size > 0) size--;
