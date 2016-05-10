@@ -14,6 +14,7 @@ double total_productive_time;
 double total_turnaround_time;
 double total_ltq_wait;
 double total_ioq_wait;
+int sys_clock;
 
 int main() {
     //////////////////
@@ -30,6 +31,7 @@ int main() {
     total_stq_wait = 0;
     total_ltq_wait = 0;
     total_ioq_wait = 0;
+    sys_clock = 0;
     
         // Simulation devices
     longQueue longterm_queue;
@@ -139,8 +141,6 @@ int main() {
             // reset job_timer to zero
         job_timer = 0;
         
-            // increment count
-        total_jobs_run++;
             // increment more_jobs
         flags.jobs_in_system++;
         
@@ -177,8 +177,6 @@ int main() {
             current_job->arrival = sys_clock;
                 // reset job_timer to zero
             job_timer = 0;
-                // increment count
-            total_jobs_run++;
                 // increment more_jobs
             flags.jobs_in_system++;
         }

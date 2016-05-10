@@ -159,7 +159,7 @@ static job *processor = NULL;				//the (only) processor
 static job *IO = NULL;						//the I/O device
 
 			//declare variables for the followings
-static int sys_clock = 0;						//clock to keep track of time
+extern int sys_clock;						//clock to keep track of time
 static int LTQ_time = 0;					//total long term queue wait time for all jobs
 static int STQ_time = 0;					//total short term queue wait time for all jobs
 static int IOQ_time = 0;					//total I/O Queue wait time for all jobs
