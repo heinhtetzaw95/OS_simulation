@@ -208,11 +208,12 @@ int main() {
     double contextSwitchTime = total_switch_time;
     double systemThroughput = (double)((double)total_jobs_run) / ((double)total_time);
     
+        //print header before printing anything
     print_header(outfile);
     print_output("First in First Out", total_time, contextSwitchTime,
                  cpuUtilization, avgResponse, avgTurnaround, systemThroughput, avgLTQ, avgSTQ, avgIOQ, outfile);
     
-    
-    
+        //indicate end of output at the end
+    print_footer(outfile);
     return 0;
 }
