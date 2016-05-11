@@ -176,7 +176,7 @@ int main() {
         // GOTO 3.1 LOL
         
             // When a job enters the system
-        if (job_list[jobs_admitted].inter_arrival == job_timer) {
+        if (job_list[jobs_admitted].inter_arrival <= job_timer && !longterm_queue.isFull()) {
                 // Set job flag to true
             flags.incoming_job = true;
                 // Get reference to job

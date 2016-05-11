@@ -16,7 +16,7 @@
 #include <string>
 #include <array>
 
-#define long_max 65
+#define long_max 60
 #define short_max 30
 #define io_max 30
 #define cpu_burst_max 25
