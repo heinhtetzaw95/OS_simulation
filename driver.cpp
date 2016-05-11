@@ -198,7 +198,7 @@ int main() {
     }
     
         // Process accumulated data
-    double total_time = 0.0 + sys_clock;
+    double total_time = total_switch_time + sys_clock;
     double avgLTQ = avg_ltq(total_jobs_run, total_ltq_wait);
     double avgSTQ = avg_stq(total_jobs_run, total_stq_wait);
     double avgIOQ = avg_ioq(total_jobs_run, total_ioq_wait);

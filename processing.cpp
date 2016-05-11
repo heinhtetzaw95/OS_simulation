@@ -1,7 +1,7 @@
 /*
  *	File Name				:	processing.cpp
  *	Primary Author			:   Katie Schaffer
- *	Contributing Author(s)	:   Francesco Polizzi
+ *	Contributing Author(s)	:   Francesco Polizzi, Jeremy Viner
  *	Date Created			:	26 April 2016
  *	Date Last Modified		:	6 May 2016
  *
@@ -45,8 +45,6 @@ void manage_ltq(longQueue& longterm_queue, job* new_job, FlagContainer& flags) {
         // Remove incoming job flag
         flags.incoming_job = false;
     }
-    //if(longterm_queue.isFull())
-      //  cout << "error" << endl;
 
     return;
 }
@@ -206,6 +204,7 @@ void manage_cpu(CPU* cpu, shortQueue& shortterm_queue, FlagContainer& flags) {
                 
                 // Check for completion of burst
                 if (cpu->process->cpu_burst[cpu->process->burst_num] <= 0) {
+                    total_switch_time += 3;
                     // Flag completion
                     cpu->complete = true;
                     // Increment burst
@@ -253,7 +252,7 @@ void manage_cpu(CPU* cpu, shortQueue& shortterm_queue, FlagContainer& flags) {
 
 /* manage_ioq
  * Author: Katelyn Schaffer
- * Other contributors: Francesco Polizzi, Jeremey Viner
+ * Other contributors: Francesco Polizzi, Jeremy Viner
  * Last revised: 6 May 2016
  *
  * Description: Manages the IO queue
@@ -303,11 +302,10 @@ void manage_iodevice(IOdevice* io_device, ioQueue& io_queue, FlagContainer& flag
             
             // If finished burst
             if (io_device->timer >= io_device->burst_length) {
-                
-                //if(io_device->process->num == 4)
-                //cout << io_device->process->num << " " << io_device->timer << " " << io_device->burst_length <<  " " << io_device->process->cpu_burst[io_device->process->burst_num] << endl;
                 // Indicate IO complete
                 io_device->complete = true;
+                
+                total_switch_time += 3;
                 // Interrupt if more CPU bursts to process
                 if (io_device->process->cpu_burst[io_device->process->burst_num] > 0)
                 {
@@ -317,8 +315,6 @@ void manage_iodevice(IOdevice* io_device, ioQueue& io_queue, FlagContainer& flag
                 // Finish up if all bursts are processed
                 else {
                     io_device->job_finished = true;
-                    if(io_device->process->num == 94)
-                    cout << io_device->process->num << endl;
                 }
             } // End handling finished burst
         } // End handling process in device

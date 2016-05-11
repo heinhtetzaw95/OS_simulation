@@ -41,9 +41,7 @@ double avg_ltq(int total_jobs, double ltq_wait) {
 double 	avg_stq(int total_jobs, double stq_wait){
         // calculate average
     double average = stq_wait/total_jobs;
-    
-    cout << total_stq_wait << " " << total_jobs << endl;
-    
+        
         // return average
     return average;
 }
