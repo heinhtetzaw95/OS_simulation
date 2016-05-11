@@ -3,7 +3,7 @@
  *	Primary Author			:   Francesco Polizzi
  *	Contributing Author(s)	:
  *	Date Created			:	26 April 2016
- *	Date Last Modified		:	3 May 2016
+ *	Date Last Modified		:	11 May 2016
  *
  *	Description		:	This is the file for our OS Simulation driver where all
  *						auxiliary functions are called
@@ -112,19 +112,20 @@ void print_output(string algorithmUsed, int timeToComplete, int contextSwitchTim
                   double cpuUtilization, int avgResponse, int avgTurnaround, double systemThroughput,
                   double avgLTQ, double avgSTQ, double avgIOQ, ofstream& Outfile){
         // print our output
+    
     Outfile << fixed << setprecision(2);
-    Outfile << "Developed using " << algorithmUsed << " algorithm." << endl;
-    Outfile << "Total Simulation Time: \t\t" << timeToComplete << endl;
-    Outfile << "Total Context Switch Time: \t" << contextSwitchTime << endl;
-    Outfile << "CPU Utilization Rate: \t\t" << cpuUtilization << endl;
-    Outfile << "Average Response Time: \t\t" << avgResponse << endl;
-    Outfile << "Average Turnaround Time: \t" << avgTurnaround << endl;
+    Outfile << "Developed using \"" << algorithmUsed << "\" algorithm." << endl << endl;
+    Outfile << "Total Simulation Time      :" << setw(8) << timeToComplete << endl;
+    Outfile << "Total Context Switch Time  :" << setw(8) << contextSwitchTime << endl;
+    Outfile << "CPU Utilization Rate       :" << setw(8) << cpuUtilization << "%" << endl;
+    Outfile << "Average Response Time      :" << setw(8) << avgResponse << endl;
+    Outfile << "Average Turnaround Time    :" << setw(8) << avgTurnaround << endl;
     Outfile << fixed << setprecision(4);
-    Outfile << "System Throughput: \t\t" << systemThroughput << endl;
+    Outfile << "System Throughput          :" << setw(8) << systemThroughput << endl;
     Outfile << fixed << setprecision(2);
-    Outfile << "Average LTQ Wait Time: \t\t" << avgLTQ << endl;
-    Outfile << "Average STQ Wait Time: \t\t" << avgSTQ << endl;
-    Outfile << "Average IOQ Wait Time: \t\t" << avgIOQ << endl;
+    Outfile << "Average LTQ Wait Time      :" << setw(8) << avgLTQ << endl;
+    Outfile << "Average STQ Wait Time      :" << setw(8) << avgSTQ << endl;
+    Outfile << "Average IOQ Wait Time      :" << setw(8) << avgIOQ << endl;
 }
 
 /* PRINT_HEADER
@@ -135,12 +136,12 @@ void print_output(string algorithmUsed, int timeToComplete, int contextSwitchTim
  */
 void print_header(ofstream& Outfile){
         // print our output header
-    Outfile << setw(30) << "Francesco Polizzi,";
-    Outfile << setw(30) << "Katie Schaffer,";
-    Outfile << setw(30) << "Jeremy Viner,";
-    Outfile << setw(30) << "& Hein Htet Zaw";
-    Outfile << setw(17) << "CSC 40600";
-    Outfile << setw(15) << "Section 11" << endl;
+    Outfile << setw(22) << "Francesco Polizzi, ";
+    Outfile << "Katie Schaffer, ";
+    Outfile << "Jeremy Viner, ";
+    Outfile << "& Hein Htet Zaw" << endl;
+    Outfile << setw(30) << "CSC 40600";
+    Outfile << setw(17) << "Section 11" << endl;
     Outfile << setw(30) << "Spring 2016";
     Outfile << setw(20) << "Assignment #2" << endl;
     Outfile << setw(35) << "-----------------------------------";

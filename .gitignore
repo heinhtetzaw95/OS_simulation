@@ -246,3 +246,12 @@ ModelManifest.xml
 *.vcxproj
 OS_simulation.vcxproj.filters
 SIM_DATA.txt
+OS_simulation.xcodeproj/xcuserdata/heinhtetzaw.xcuserdatad/xcschemes/xcschememanagement.plist
+
+OS_simulation.xcodeproj/project.pbxproj
+
+*.xcworkspacedata
+
+*.xcuserstate
+
+*.xcscheme

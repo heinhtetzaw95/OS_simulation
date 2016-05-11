@@ -3,7 +3,7 @@
 *	Primary Author			:	Hein Htet Zaw
 *	Contributing Author(s)	:	
 *	Date Created			:	26 April 2016
-*	Date Last Modified		:	7 May 2016
+*	Date Last Modified		:	11 May 2016
 *	
 *	Description		:	This is the header file where all the global variables and data structures
 *						are declared and defined.
@@ -35,7 +35,7 @@ struct job {
 	int cpu_burst[cpu_burst_max];	//the time this process requires the CPU
     int burst_num;                  //current burst
     int burst_count = 0;            //total number of bursts (it's 0 initially)
-    int lastEnterTime = 0;        //the time that a process last entered a device/queue
+    int lastEnterTime = 0;          //the time that a process last entered a device/queue
 
 				//create variables for the followings
 
@@ -43,7 +43,7 @@ struct job {
 	int time_in_longQ = 0;		//total time spent in the Long Term Queue
 	int time_in_shortQ = 0;		//total time spent in the Short Term Queue
 	int time_in_ioQ = 0;		//total time spent in the I/O Queue
-    int time_in_system = 0;
+    int time_in_system = 0;     //total time spent in the system
 	int turnaround = 0;			//the turnaround time
 	int response = 0;			//the response time
 	int switching = 0;			//time spent in context switching
@@ -101,22 +101,22 @@ private:
 	job *theQ[short_max];
 
 public:
-	shortQueue() { front = -1; rear = -1; size = 0; };							//constructs the object
-	bool isEmpty() { if (size == 0) return true; else return false; };			//returns empty or not
-    bool isNearlyFull() { if (size == short_max-1) return true; else return false; };
-	bool isFull() { if (size == short_max) return true; else return false; };	//returns full or not
+	shortQueue() { front = -1; rear = -1; size = 0; };                                  //constructs the object
+	bool isEmpty() { if (size == 0) return true; else return false; };                  //returns empty or not
+    bool isNearlyFull() { if (size == short_max-1) return true; else return false; };   //returns nearly full or not
+	bool isFull() { if (size == short_max) return true; else return false; };           //returns full or not
 	
 			//************************************************************
 			//   Warning! If a new job is added while queue is full,
 			//   the job will be dropped without any recovery option!
 			//************************************************************
-	bool add(job * );					//adds the given job
-	job * getNext();					//get the pointer of the next job in the queue
+	bool add(job * );                           //adds the given job
+	job * getNext();                            //get the pointer of the next job in the queue
 
-	int getRear() { return rear; };		//returns the array number of lsatmost node
+	int getRear() { return rear; };             //returns the array number of lsatmost node
 	job * getFront() { return theQ[front]; };	//returns the array number of frontmost node
-	int getSize() { return size; };		//returns the current number of jobs in the queue
-	bool incrementAll();				//increment all the jobs inside the queue
+	int getSize() { return size; };             //returns the current number of jobs in the queue
+	bool incrementAll();                        //increment all the jobs inside the queue
 };
 
 		//declare and define the required functions for I/O queue type
@@ -134,13 +134,13 @@ public:
 			//   Warning! If a new job is added while queue is full,
 			//   the job will be dropped without any recovery option!
 			//************************************************************
-	bool add(job *);					//adds the given job
-	job * getNext();					//get the pointer of the next job in the queue
+	bool add(job *);                            //adds the given job
+	job * getNext();                            //get the pointer of the next job in the queue
 
-	int getRear() { return rear; };		//returns the array number of lsatmost node
+	int getRear() { return rear; };             //returns the array number of lsatmost node
 	job * getFront() { return theQ[front]; };	//returns the array number of frontmost node
-	int getSize() { return size; };		//returns the current number of jobs in the queue
-	bool incrementAll();				//increment all the jobs inside the queue
+	int getSize() { return size; };             //returns the current number of jobs in the queue
+	bool incrementAll();                        //increment all the jobs inside the queue
 };
 
 // function declarations for auxillary functions
@@ -188,7 +188,6 @@ struct IOdevice {
 };
 
 struct CPU {
-    //int     process_id;                 //
     int     timer;                      // Keeps track of the current CPU burst
     bool    complete;                   // Signals the completion of a CPU burst
     bool    ready;                      // Signals that the CPU is available
