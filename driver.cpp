@@ -12,6 +12,7 @@ int total_jobs_run;
 double total_response_time;
 double total_productive_time;
 double total_turnaround_time;
+double total_switch_time;
 double total_ltq_wait;
 double total_ioq_wait;
 int sys_clock;
@@ -28,6 +29,7 @@ int main() {
     total_response_time = 0;
     total_productive_time = 0;
     total_turnaround_time = 0;
+    total_switch_time = 0;
     total_stq_wait = 0;
     total_ltq_wait = 0;
     total_ioq_wait = 0;
@@ -91,6 +93,7 @@ int main() {
         
             // Initialize other job variables
         tempJob.burst_num = 0;
+        tempJob.response = -1;
         
             // Initialize burst list to all -1
         for (int burst_num = 0; burst_num < cpu_burst_max; burst_num++) {
@@ -195,16 +198,15 @@ int main() {
     }
     
         // Process accumulated data
+    double total_time = 0.0 + sys_clock;
     double avgLTQ = avg_ltq(total_jobs_run, total_ltq_wait);
     double avgSTQ = avg_stq(total_jobs_run, total_stq_wait);
     double avgIOQ = avg_ioq(total_jobs_run, total_ioq_wait);
     double avgResponse = avg_response_time(total_jobs_run, total_response_time);
     double avgTurnaround = avg_turnaround_time(total_jobs_run, total_turnaround_time);
-    double total_time = 0;
-    double cpuUtilization = 0;
-    double contextSwitchTime = 0;
-    double systemThroughput = 0;
-    //double cpuUtilization = cpu_utilization(total_productive_time, total_time);
+    double cpuUtilization = cpu_utilization(total_productive_time, sys_clock);
+    double contextSwitchTime = total_switch_time;
+    double systemThroughput = (double)((double)total_jobs_run) / ((double)total_time);
     
     print_header(outfile);
     print_output("First in First Out", total_time, contextSwitchTime,

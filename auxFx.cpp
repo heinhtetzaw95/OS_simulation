@@ -111,19 +111,22 @@ double cpu_utilization(int productive_time, double total_time){
  * Description: Printing our information output to the user
  */
 void print_output(string algorithmUsed, int timeToComplete, int contextSwitchTime,
-                  int cpuUtilization, int avgResponse, int avgTurnaround, int systemThroughput,
+                  double cpuUtilization, int avgResponse, int avgTurnaround, double systemThroughput,
                   double avgLTQ, double avgSTQ, double avgIOQ, ofstream& Outfile){
         // print our output
+    Outfile << fixed << setprecision(2);
     Outfile << "Developed using " << algorithmUsed << " algorithm." << endl;
-    Outfile << "Total Simulation Time: " << timeToComplete << endl;
-    Outfile << "Total Context Switch Time: " << contextSwitchTime << endl;
-    Outfile << "CPU Utilization Rate: " << cpuUtilization << endl;
-    Outfile << "Average Response Time: " << avgResponse << endl;
-    Outfile << "Average Turnaround Time: " << avgTurnaround << endl;
-    Outfile << "System Throughput: " << systemThroughput << endl;
-    Outfile << "Average LTQ Wait Time: " << avgLTQ << endl;
-    Outfile << "Average STQ Wait Time: " << avgSTQ << endl;
-    Outfile << "Average IOQ Wait Time: " << avgIOQ << endl;
+    Outfile << "Total Simulation Time: \t\t" << timeToComplete << endl;
+    Outfile << "Total Context Switch Time: \t" << contextSwitchTime << endl;
+    Outfile << "CPU Utilization Rate: \t\t" << cpuUtilization << endl;
+    Outfile << "Average Response Time: \t\t" << avgResponse << endl;
+    Outfile << "Average Turnaround Time: \t" << avgTurnaround << endl;
+    Outfile << fixed << setprecision(4);
+    Outfile << "System Throughput: \t\t" << systemThroughput << endl;
+    Outfile << fixed << setprecision(2);
+    Outfile << "Average LTQ Wait Time: \t\t" << avgLTQ << endl;
+    Outfile << "Average STQ Wait Time: \t\t" << avgSTQ << endl;
+    Outfile << "Average IOQ Wait Time: \t\t" << avgIOQ << endl;
 }
 
 /* PRINT_HEADER

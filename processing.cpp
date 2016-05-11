@@ -72,10 +72,15 @@ void manage_stq(shortQueue& shortterm_queue, longQueue& longterm_queue, IOdevice
         
         // Handle if the job is finished
         if (io_device->job_finished) {
+            
+                // Calculate data
+            io_device->process->turnaround = sys_clock - io_device->process->arrival;
+            
                 // Collect data
             total_response_time += io_device->process->response;
             total_productive_time += io_device->process->length;
             total_turnaround_time += io_device->process->turnaround;
+            total_switch_time += io_device->process->switching;
             total_stq_wait += io_device->process->time_in_shortQ;
             total_ltq_wait += io_device->process->time_in_longQ;
             total_ioq_wait += io_device->process->time_in_ioQ;
@@ -152,6 +157,8 @@ void manage_cpu(CPU* cpu, shortQueue& shortterm_queue, FlagContainer& flags) {
         
         // Decrement suspend timer
         cpu->suspend_timer--;
+        // Increment context switch timer
+        cpu->susp_process->switching++;
         // Check if interrupt is complete
         if (cpu->suspend_timer <= 0) {
             flags.interrupt = false;
@@ -225,6 +232,10 @@ void manage_cpu(CPU* cpu, shortQueue& shortterm_queue, FlagContainer& flags) {
                     cpu->process = shortterm_queue.getNext();
                     // set last enter time for job
                     cpu->process->lastEnterTime = sys_clock;
+                    // set response time if not already set
+                    if (cpu->process->response < 0) {
+                        cpu->process->response = sys_clock - cpu->process->arrival;
+                    }
                     // Indicate CPU is not ready for more processes
                     cpu->ready = false;
                     // Initialize cpu process timer

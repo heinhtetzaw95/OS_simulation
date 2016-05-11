@@ -150,7 +150,7 @@ double avg_ioq(int, double);
 double avg_response_time(int, double);
 double avg_turnaround_time(int, double);
 double cpu_utilization(int,double);
-void print_output(string, int, int, int, int, int, int, double, double, double, ofstream&);
+void print_output(string, int, int, double, int, int, double, double, double, double, ofstream&);
 void print_header(std::ofstream&);
 void print_footer(std::ofstream&);
 
@@ -172,6 +172,7 @@ extern int total_jobs_run;
 extern double total_response_time;
 extern double total_productive_time;
 extern double total_turnaround_time;
+extern double total_switch_time;
 extern double total_stq_wait;
 extern double total_ltq_wait;
 extern double total_ioq_wait;
