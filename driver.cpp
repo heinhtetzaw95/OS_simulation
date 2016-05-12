@@ -1,29 +1,47 @@
+/*
+ *	File Name				:	driver.cpp
+ *	Author(s)               :   Francesco Polizzi, Katie Schaffer, Jeremy Viner, Hein Htet Zaw
+ *	Date Created			:	26 April 2016
+ *	Date Last Modified		:	6 May 2016
+ *
+ *	Description		:   Main routine of the program; reads the data files and runs the simulation.
+ *
+ */
+
     //libraries to include
 #include <iostream>
 #include <fstream>
 #include <iomanip>
-
 #include "simulation_header.h"
 
 using namespace std;
 
-double total_stq_wait;
-int total_jobs_run;
-double total_response_time;
-double total_productive_time;
-double total_turnaround_time;
-double total_switch_time;
-double total_ltq_wait;
-double total_ioq_wait;
-int sys_clock;
+    // Declare tracking variables
+int total_jobs_run;                 // Total jobs run
+double total_response_time;         // Total response time
+double total_productive_time;       // Total productive time
+double total_turnaround_time;       // Total turnaround time
+double total_switch_time;           // Total time spent context switching
+double total_ltq_wait;              // Total time spent waiting in longterm queue
+double total_stq_wait;              // Total time spent waiting in shortterm queue
+double total_ioq_wait;              // Total time spent waiting in the IO queue
+int sys_clock;                      // Current system time (in clock ticks)
 
+/* main
+ * Author(s): Francesco Polizzi, Katie Schaffer, Jeremy Viner, Hein Htet Zaw
+ * Date Created: 28 April 2016
+ * Last revised: 10 May 2016
+ *
+ * Description: Primary simulation routine; initializes counters and variables, reads input file,
+ *                  calls all functions to managed parts of the computer, and prepares output
+ *                  data for printing
+ */
 int main() {
-    //////////////////
-    /// STEP 1 ///////////////////////////////////////////////////////
-    //////////////////
-
-        // old vars
-    int job_timer = 0; // Keeps track of the time between job arrivals
+    //////////////////////////////////////////////////////////////////////////////////////////
+    /// STEP 1 - Initialize
+    //////////////////////////////////////////////////////////////////////////////////////////
+    
+        // Initialize tracker variables to 0
     total_stq_wait = 0;
     total_jobs_run = 0;
     total_response_time = 0;
@@ -34,52 +52,55 @@ int main() {
     total_ltq_wait = 0;
     total_ioq_wait = 0;
     sys_clock = 0;
-    
-    int jobs_admitted = 0;
+
+        // Declare counter variables
+    int jobs_admitted = 0;      // Counts number of jobs admitted so far
+    int job_timer = 0;          // Keeps track of the time between job arrivals
     
         // Simulation devices
-    longQueue longterm_queue;
-    shortQueue shortterm_queue;
-    ioQueue io_queue;
-    IOdevice io_device;
-    CPU cpu;
+    longQueue longterm_queue;   // Longterm queue
+    shortQueue shortterm_queue; // Shortterm queue
+    ioQueue io_queue;           // IO queue
+    IOdevice io_device;         // IO device
+    CPU cpu;                    // CPU
     
-        // Initialize flags
+        // Initialize flags and flag container
     FlagContainer flags;
     flags.jobs_in_system = 0;
     flags.incoming_job = false;
     flags.interrupt = false;
     
-        // Initialize IO device
+        // Initialize IO device values
     io_device.available = true;
     io_device.complete = false;
     io_device.job_finished = false;
     io_device.timer = 0;
-    //io_device.burst_length;
     
-        // Initialize CPU
+        // Initialize CPU values
     cpu.ready = true;
     cpu.timer = 0;
     cpu.complete = false;
     cpu.processing_stopped = false;
     cpu.suspended = false;
     
-         // initialize our job and jobs list
+         // Initialize our job and jobs list
     job tempJob;
     job* current_job;
     job job_list[150];
 
-         // initialize our
-    ifstream infile("SIM_DATA.txt", ios::in);
-    ofstream outfile("Output.txt", ios::out);
+         // Initialize data files
+    ifstream infile("SIM_DATA.txt", ios::in);   // Onput file
+    ofstream outfile("Output.txt", ios::out);   // Output file
 
          //initialize our reading flag and job count
     bool reading = true;
     int job_count = 0;
     int jobs_entering_system=0;
-    //////////////////
-    /// STEP 2 //////////////////////////////////////////////////////////////////
-    //////////////////
+    
+    
+    //////////////////////////////////////////////////////////////////////////////////////////
+    /// STEP 2 - Get data from input file
+    //////////////////////////////////////////////////////////////////////////////////////////
 
          // Read and process data from our file
     while (reading) {
@@ -122,47 +143,39 @@ int main() {
         }
     }
 
-
-    //////////////////
-    /// STEP 3 //////////////////////////////////////////////////////////////////
-    //////////////////
     
-    // Get first job into the system
-
-    /// 3.1 //////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////
+    /// STEP 3 - Get first job into the system
+    //////////////////////////////////////////////////////////////////////////////////////////
     
-    // Update job timer
+        // Update job timer
     job_timer++;
 
-    /// 3.2 //////////////////////////////////////////////////////////////////
         // When a job enters the system
     if (job_list[jobs_admitted].inter_arrival == job_timer) {
             // Set job flag to true
         flags.incoming_job = true;
             // Get reference to job
         current_job = &job_list[total_jobs_run];
-            // record time of arrival
+            // Record time of arrival
         current_job->arrival = sys_clock;
-            // reset job_timer to zero
+            // Reset job_timer to zero
         job_timer = 0;
-        
+            // Update counter of jobs admitted
         jobs_admitted++;
         
-            // increment more_jobs
+            // Increment number of jobs currently int the system
         jobs_entering_system++;
         flags.jobs_in_system++;
-        
-        
     }
-    
    
-    //////////////////
-    /// STEP 4 //////////////////////////////////////////////////////////////////
-    //////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////
+    /// STEP 4 - Process incoming jobs until all are processed
+    //////////////////////////////////////////////////////////////////////////////////////////
 
-    /// 4.1 //////////////////////////////////////////////////////////////////
-        //while there are jobs to process
+        // Process while there are jobs to process
     while(total_jobs_run < job_count) {
+            // Manage all parts of the computer
         manage_ltq(longterm_queue, current_job, flags);
         manage_stq(shortterm_queue, longterm_queue, &io_device, flags);
         manage_cpu(&cpu, shortterm_queue, flags);
@@ -172,30 +185,32 @@ int main() {
             // Increment clock
         sys_clock++;
         
-            // Check for incoming processes
-        // GOTO 3.1 LOL
-        
-            // When a job enters the system
+            // Check for incoming processes.
+            //  When a job enters the system...
         if (job_list[jobs_admitted].inter_arrival <= job_timer && !longterm_queue.isFull()) {
                 // Set job flag to true
             flags.incoming_job = true;
                 // Get reference to job
             current_job = &job_list[jobs_entering_system];
-                // record time of arrival
+                // Record time of arrival
             current_job->arrival = sys_clock;
-                // reset job_timer to zero
+                // Reset job_timer to zero
             job_timer = 0;
-                //increment admitted job count
+                // Increment admitted job count
             jobs_admitted++;
-                // increment more_jobs
+                // Increment more_jobs
             jobs_entering_system++;
             flags.jobs_in_system++;
         }
         
-        // Update job timer
+            // Update job timer
         job_timer++;
-        
     }
+    
+    
+    //////////////////////////////////////////////////////////////////////////////////////////
+    /// STEP 5 - Compile results and print to output file
+    //////////////////////////////////////////////////////////////////////////////////////////
     
         // Process accumulated data
     double total_time = total_switch_time + sys_clock;
@@ -206,14 +221,16 @@ int main() {
     double avgTurnaround = avg_turnaround_time(total_jobs_run, total_turnaround_time);
     double cpuUtilization = cpu_utilization(total_productive_time, sys_clock);
     double contextSwitchTime = total_switch_time;
-    double systemThroughput = (double)((double)total_jobs_run) / ((double)total_time);
+    double systemThroughput = ((double)total_jobs_run) / ((double)total_time);
     
-        //print header before printing anything
+        // Print header before printing anything
     print_header(outfile);
+        // Print "First in First Out" results
     print_output("First in First Out", total_time, contextSwitchTime,
-                 cpuUtilization, avgResponse, avgTurnaround, systemThroughput, avgLTQ, avgSTQ, avgIOQ, outfile);
-    
-        //indicate end of output at the end
+                 cpuUtilization, avgResponse, avgTurnaround, systemThroughput, avgLTQ,
+                 avgSTQ, avgIOQ, outfile);
+        // Indicate end of output at the end
     print_footer(outfile);
+    
     return 0;
 }
